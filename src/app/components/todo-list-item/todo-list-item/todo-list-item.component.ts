@@ -10,12 +10,10 @@ export class TodoListItemComponent implements OnInit {
 
   constructor() { }
 
-  @Input() task: TodoTask = new TodoTask(0, "", false);
+  @Input() taskList: TodoTask[] = [];
 
   ngOnInit(): void {
   }
 
-  onChecked = () => {
-    this.task.isCompleted = !this.task.isCompleted;
-  }
+ 
 }

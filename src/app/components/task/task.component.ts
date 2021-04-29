@@ -13,5 +13,5 @@ export class TaskComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  @Input() taskList: TodoTask[]=[];
+  @Input() task: TodoTask = new TodoTask(0,"",false);
 }

@@ -1,14 +1,7 @@
 <!--<app-todo-item [todoTasks]='todoItems'></app-todo-item>-->
 <app-todo-item (taskEventEmitter)='appAddTask($event)'></app-todo-item>
-<app-todo-list-item></app-todo-list-item>
+<app-todo-list-item [taskList]='todoItems'></app-todo-list-item>
 
-
-
-<div>
-   <app-task *ngFor='let task of todoItems' [task]="task">
-      
-   </app-task>
-</div>
 
 
 

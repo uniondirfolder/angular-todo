@@ -1,8 +1,8 @@
 
 
 <div>
-    <input type="checkbox" (click)="onChecked()" [(ngModel)]="task.isCompleted" />
-    <label>{{task.context}}</label>
-</div>
-
+    <app-task *ngFor='let task of taskList' [task]="task">
+ 
+    </app-task>
+ </div>
 
