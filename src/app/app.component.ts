@@ -10,6 +10,7 @@ export class AppComponent {
   title = 'angular-todo';
 
   todoItems: TodoTask[] = [];
+  
   appAddTask = (event: TodoTask) => {
     // console.log(event.toString())
     this.todoItems.push(event);

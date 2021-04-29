@@ -7,11 +7,15 @@ import { AppComponent } from './app.component';
 import { TodoItemComponent } from './components/todo-item/todo-item.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
+import { TodoListItemComponent } from './components/todo-list-item/todo-list-item/todo-list-item.component';
+import { TaskComponent } from './components/task/task.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TodoItemComponent
+    TodoItemComponent,
+    TodoListItemComponent,
+    TaskComponent
   ],
   imports: [
     BrowserModule,
