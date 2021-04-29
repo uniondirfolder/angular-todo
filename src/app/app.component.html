@@ -1,0 +1,30 @@
+<!--<app-todo-item [todoTasks]='todoItems'></app-todo-item>-->
+<app-todo-item (taskEventEmitter)='appAddTask($event)'></app-todo-item>
+
+<table class="table table-primary">
+  <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Task context</th>
+      <th scope="col">Completed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <h4 *ngFor='let task of todoItems'>
+        <td>{{task.id}}</td>
+        <td>{{task.context}}</td>
+        <td>{{task.isCompleted}}</td>
+
+      </h4>
+
+    </tr>
+
+  </tbody>
+
+
+
+
+
+
+
