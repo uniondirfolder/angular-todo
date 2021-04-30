@@ -17,4 +17,8 @@ export class TasksComponent implements OnInit {
   }
 
   tasks: Task[] = [];
+
+  toggleTaskCompleted(task: Task) {
+    task.completed = !task.completed;
+  }
 }
