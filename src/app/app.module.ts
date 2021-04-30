@@ -11,6 +11,7 @@ import { TodoListItemComponent } from './components/todo-list-item/todo-list-ite
 import { TaskComponent } from './components/task/task.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CategoriesComponent } from './views-nvv/categories/categories.component';
+import { TasksComponent } from './views-nvv/tasks/tasks.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { CategoriesComponent } from './views-nvv/categories/categories.component
     TodoItemComponent,
     TodoListItemComponent,
     TaskComponent,
-    CategoriesComponent
+    CategoriesComponent,
+    TasksComponent
   ],
   imports: [
     BrowserModule,

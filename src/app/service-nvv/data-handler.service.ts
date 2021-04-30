@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TestData } from '../data-nvv/TestData';
 import { Category } from '../model-nvv/Category';
+import { Task } from '../model-nvv/Task';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,12 @@ export class DataHandlerService {
 
   constructor() { }
 
-  getCategories(): Category[]{
+  getCategories(): Category[] {
     return TestData.categories;
   }
+
+  getTasks(): Task[] {
+    return TestData.tasks;
+  }
+
 }
