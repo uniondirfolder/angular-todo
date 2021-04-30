@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { TestData } from '../data-nvv/TestData';
 import { Category } from '../model-nvv/Category';
 import { Task } from '../model-nvv/Task';
@@ -13,11 +14,24 @@ export class DataHandlerService {
   getCategories(): Category[] {
     return TestData.categories;
   }
-  getTasks(): Task[] {
+  /*getTasks(): Task[] {
     return TestData.tasks;
   }
   getTasksByCategory(category: Category): Task[] {
     const tasks = TestData.tasks.filter(task => task.category === category);
     return tasks;
+  }*/
+
+  //rxjs
+  taskSubject = new Subject<Task[]>();
+
+  fiilTasks() {
+    this.taskSubject.next(TestData.tasks)
   }
+
+  fillTasksByCategory(category: Category) {
+    const tasks = TestData.tasks.filter(task => task.category === category);
+    this.taskSubject.next(tasks);
+  }
+
 }
