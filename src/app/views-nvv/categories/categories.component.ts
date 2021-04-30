@@ -17,9 +17,11 @@ export class CategoriesComponent implements OnInit {
   }
 
   categories: Category[] = [];
+  selectedCategory: Category = new Category(0, "");
 
   showTasksByCategory(category: Category) {
     //this.dataHandler.getTasksByCategory(category);
+    this.selectedCategory = category;
     this.dataHandler.fillTasksByCategory(category);
   }
 }
