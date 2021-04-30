@@ -10,13 +10,15 @@ import { MaterialModule } from './material/material.module';
 import { TodoListItemComponent } from './components/todo-list-item/todo-list-item/todo-list-item.component';
 import { TaskComponent } from './components/task/task.component';
 import { HttpClientModule } from '@angular/common/http';
+import { CategoriesComponent } from './views-nvv/categories/categories.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TodoItemComponent,
     TodoListItemComponent,
-    TaskComponent
+    TaskComponent,
+    CategoriesComponent
   ],
   imports: [
     BrowserModule,
