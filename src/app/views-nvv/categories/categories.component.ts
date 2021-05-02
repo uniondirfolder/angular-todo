@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Category } from 'src/app/model-nvv/Category';
 import { DataHandlerService } from 'src/app/service-nvv/data-handler.service';
 
@@ -9,19 +9,25 @@ import { DataHandlerService } from 'src/app/service-nvv/data-handler.service';
 })
 export class CategoriesComponent implements OnInit {
 
+  @Input()
+  categories: Category[] = [];
+
+  selectedCategory: Category = new Category(0, "");
+
   constructor(private dataHandler: DataHandlerService) { }
 
   ngOnInit(): void {
-    //this.categories = this.dataHandler.getCategories();
-    this.dataHandler.categoriesSubject.subscribe(catigories => this.categories = catigories);
+    // this.categories = this.dataHandler.getCategories();
+    // this.dataHandler.categoriesSubject.subscribe(catigories => this.categories = catigories);
+    // this.dataHandler.getAllCategories().subscribe(catigories => this.categories = catigories); инициатором получения данных стал app.component
   }
 
-  categories: Category[] = [];
-  selectedCategory: Category = new Category(0, "");
+
+
 
   showTasksByCategory(category: Category) {
     //this.dataHandler.getTasksByCategory(category);
-    this.selectedCategory = category;
-    this.dataHandler.fillTasksByCategory(category);
+    // this.selectedCategory = category;
+    // this.dataHandler.fillTasksByCategory(category);
   }
 }

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -24,7 +24,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false })
   private sort!: MatSort;
 
-  tasks: Task[] = [];
+  // Текущие задачи для отображения на странице
+  @Input()
+  tasks: Task[] = [];// на прямую не присваиваем значение только через инпут
 
 
   constructor(private dataHandler: DataHandlerService) {
@@ -32,11 +34,12 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     // this.tasks = this.dataHandler.getTasks();
-    this.dataHandler.taskSubject.subscribe(tasks => this.tasks = tasks);
+    // this.dataHandler.taskSubject.subscribe(tasks => this.tasks = tasks);
+    // this.dataHandler.getAllTasks().subscribe(tasks => this.tasks = tasks);
 
-    //this.dataSource=new MatTableDataSource();
+    // this.dataSource = new MatTableDataSource();
 
-    this.refreshTable();
+    this.fillTable(); // заполняем таблицы данными (задачи) и всеми метаданными
   }
 
   ngAfterViewInit(): void { // взагалом усе проініціалізовано, тому можемо робити операції зі зміними (or undefined)
@@ -44,7 +47,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   // демонструє справи з застосуванням усіх поточних вимог (категорія, пошук, фільтри і т.інш)
-  refreshTable() {
+  private fillTable() {
     this.dataSource.data = this.tasks; // оновити джерело даних (дані масиву task оновилися)
 
     this.addTableObjects();
@@ -55,15 +58,15 @@ export class TasksComponent implements OnInit, AfterViewInit {
         case 'priority': {
           return task.priority ? task.priority.id : "";
         }
-        
+
         case 'category': {
           return task.category ? task.category.title : "";
         }
-        
+
         case 'date': {
           return task.date ? task.date.toString() : "";
         }
-        
+
         case 'title': {
           return task.title;
         }
