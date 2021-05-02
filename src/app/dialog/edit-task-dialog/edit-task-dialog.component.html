@@ -21,6 +21,16 @@
             <mat-option *ngFor="let cat of categories" [value]="cat">{{cat.title}}</mat-option>
         </mat-select>
     </mat-form-field>
+
+    <!-- выпадающий список приоритетов -->
+    <mat-form-field>
+        <mat-label>Оберіть приорітет</mat-label>
+        <mat-select [(ngModel)]="tmpPriority">
+            <mat-option [value]="null">Без приорітету</mat-option>
+            <mat-option *ngFor="let pr of priorities" [value]="pr">{{pr.title}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+
 </mat-dialog-content>
 
 <!-- кнопки возможных действий -->
