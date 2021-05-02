@@ -12,6 +12,15 @@
             <mat-icon>clear</mat-icon>
         </button>
     </mat-form-field>
+
+    <!-- выпадающий список категорий -->
+    <mat-form-field>
+        <mat-label>Оберіть категорію</mat-label>
+        <mat-select [(ngModel)]="tmpCategory">
+            <mat-option [value]="null">Без категорії</mat-option>
+            <mat-option *ngFor="let cat of categories" [value]="cat">{{cat.title}}</mat-option>
+        </mat-select>
+    </mat-form-field>
 </mat-dialog-content>
 
 <!-- кнопки возможных действий -->

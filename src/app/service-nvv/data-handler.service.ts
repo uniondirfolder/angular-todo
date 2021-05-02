@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { CategoryDAOArray } from '../data-nvv/dao/impl/CategoryDAOArray';
+import { PriorityDAOArray } from '../data-nvv/dao/impl/PriorityDAOArray';
 import { TaskDAOArray } from '../data-nvv/dao/impl/TAskDAOArray';
 import { TestData } from '../data-nvv/TestData';
 import { Category } from '../model-nvv/Category';
@@ -20,6 +21,7 @@ export class DataHandlerService {
 
   private taskDaoArray = new TaskDAOArray();
   private categoryDaoArray = new CategoryDAOArray();
+  private priorityDaoArray = new PriorityDAOArray();
 
   constructor() {
     //this.fillTasks();

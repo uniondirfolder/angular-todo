@@ -31,7 +31,7 @@ export class AppComponent implements OnInit {
     this.selectedCategory = category;
 
     this.dataHandler.searchTasks(this.selectedCategory, false, "false", false)
-      .subscribe((tasks: Task[]) => { this.tasks = this.tasks });
+      .subscribe((tasks: Task[]) => { this.tasks = tasks });
   }
   onUpdateTask(task: Task) {
 
