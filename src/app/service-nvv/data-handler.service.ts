@@ -4,6 +4,7 @@ import { CategoryDAOArray } from '../data-nvv/dao/impl/CategoryDAOArray';
 import { TaskDAOArray } from '../data-nvv/dao/impl/TAskDAOArray';
 import { TestData } from '../data-nvv/TestData';
 import { Category } from '../model-nvv/Category';
+import { Priority } from '../model-nvv/Priority';
 import { Task } from '../model-nvv/Task';
 
 
@@ -51,7 +52,11 @@ export class DataHandlerService {
   getAllTasks(): Observable<Task[]> {
     return this.taskDaoArray.getAll();
   }
-  getAllCategories(): Observable<Category[]>{
+  getAllCategories(): Observable<Category[]> {
     return this.categoryDaoArray.getAll();
+  }
+  // поиск задач по параметрам
+  searchTasks(category: Category | boolean, searchText: string | boolean, status: boolean | string, priority: Priority | boolean): Observable<Task[]> {
+    return this.taskDaoArray.search(category, searchText, status, priority);
   }
 }

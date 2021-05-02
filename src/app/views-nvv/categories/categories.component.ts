@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Category } from 'src/app/model-nvv/Category';
 import { DataHandlerService } from 'src/app/service-nvv/data-handler.service';
 
@@ -11,6 +11,10 @@ export class CategoriesComponent implements OnInit {
 
   @Input()
   categories: Category[] = [];
+
+  @Output()
+  selectCategory = new EventEmitter<Category>();
+
 
   selectedCategory: Category = new Category(0, "");
 
@@ -27,7 +31,12 @@ export class CategoriesComponent implements OnInit {
 
   showTasksByCategory(category: Category) {
     //this.dataHandler.getTasksByCategory(category);
-    // this.selectedCategory = category;
     // this.dataHandler.fillTasksByCategory(category);
+
+    if (this.selectedCategory === category) { return; } // лишний раз не делать запрос данных
+
+    this.selectedCategory = category; // сохраняем выбраную категорию
+
+    this.selectCategory.emit(this.selectedCategory); // вызываем внешний обработчик и передаем туда выбраную категорию
   }
 }

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -24,9 +24,15 @@ export class TasksComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false })
   private sort!: MatSort;
 
+  tasks: Task[] = [];
   // Текущие задачи для отображения на странице
-  @Input()
-  tasks: Task[] = [];// на прямую не присваиваем значение только через инпут
+  @Input('tasks')
+  set setTasks(tasks: Task[]) {// на прямую не присваиваем значение только через инпут
+    this.tasks = tasks;
+    this.fillTable();
+  }
+  @Output()
+  updateTask = new EventEmitter<Task>();
 
 
   constructor(private dataHandler: DataHandlerService) {
@@ -48,6 +54,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   // демонструє справи з застосуванням усіх поточних вимог (категорія, пошук, фільтри і т.інш)
   private fillTable() {
+    if (!this.dataSource) { return; }
+
     this.dataSource.data = this.tasks; // оновити джерело даних (дані масиву task оновилися)
 
     this.addTableObjects();
@@ -95,5 +103,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
   private addTableObjects() {
     this.dataSource.sort = this.sort; // компонент сортування даних (за потреби)
     this.dataSource.paginator = this.paginator; // оновити компонент поділу на сторінки
+  }
+  onClickTask(task: Task){
+    this.updateTask.emit(task);
   }
 }

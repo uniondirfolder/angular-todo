@@ -1,4 +1,3 @@
-
 <!--<app-todo-item [todoTasks]='todoItems'></app-todo-item>
 <app-todo-item (taskEventEmitter)='appAddTask($event)'></app-todo-item>
 <app-todo-list-item [taskList]='todoItems'></app-todo-list-item>-->
@@ -7,7 +6,7 @@
 
 <div class="wrapper ">
 
-  <app-categories [categories]="categories"></app-categories>
+  <app-categories (selectCategory)="onSelectCategory($event)" [categories]="categories"></app-categories>
 
   <div class="main-panel">
 
@@ -81,18 +80,19 @@
 
     <div class="content">
       <div class="container-fluid">
-        
-        
+
+
         <div class="row">
-          
+
           <div class="col-md-12">
 
-            <app-tasks [tasks]="tasks"></app-tasks>
+            <app-tasks [tasks]="tasks"
+            (updateTask)="onUpdateTask($event)"></app-tasks>
 
           </div>
         </div>
       </div>
     </div>
-    
+
   </div>
-</div> 
+</div>
