@@ -2,7 +2,7 @@
   <div class="card-header card-header-warning">
     <h4 class="card-title">Стан справ</h4>
   </div>
-  <div class="card-body table-responsive">
+  <div class="card-body table-responsive" *ngIf="tasks.length > 0">
 
     <table [dataSource]="dataSource" mat-table matSort>
 
@@ -31,7 +31,7 @@
       <!-- дата виконання -->
       <ng-container matColumnDef="date">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Термін</th>
-        <td class="col-date" *matCellDef="let task" [ngClass]="{'completed': task.completed, 'nodate': task.date == null}" mat-cell>
+        <td class="col-date" *matCellDef="let task" [ngClass]="{'completed': task.completed, 'novalue': task.date == null}" mat-cell>
           {{task.date | date: "mediumDate"}}
         </td>
       </ng-container>
@@ -39,7 +39,7 @@
       <!-- приорітет -->
       <ng-container matColumnDef="priority">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Приорітет</th>
-        <td class="col-priority" *matCellDef="let task" [ngClass]="{'completed': task.completed, 'nopriority': task.priority == null}"
+        <td class="col-priority" *matCellDef="let task" [ngClass]="{'completed': task.completed, 'novalue': task.priority == null}"
           mat-cell>
           {{task.priority ? task.priority.title : "немає"}}
         </td>
@@ -49,7 +49,7 @@
       <ng-container matColumnDef="category">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Категорія</th>
         <td class="col-category" *matCellDef="let task"
-          [ngClass]="{'completed': task.completed, 'nocategory': task.category == null, 'link': !task.completed && task.category}"
+          [ngClass]="{'completed': task.completed, 'novalue': task.category == null}"
           mat-cell>
           {{task.category ? task.category.title : "немає"}}
         </td>
@@ -65,6 +65,9 @@
     </table>
 
     <mat-paginator [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons #matPaginator></mat-paginator>
+  </div>
+  <div *ngIf="tasks.length == 0">
+    <p class="not-found">Нічого не знайдено</p>
   </div>
 </div>
 
