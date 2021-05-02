@@ -47,7 +47,9 @@ export class TaskDAOArray implements TaskDAO {
     }
 
     update(arg: Task): Observable<Task> {
-        throw new Error("Method not implemented.");
+        const taskTmp = TestData.tasks.find(t => t.id === arg.id);
+        if (taskTmp) TestData.tasks.splice(TestData.tasks.indexOf(taskTmp), 1, arg);
+        return of(arg);
     }
 
     getAll(): Observable<Task[]> {

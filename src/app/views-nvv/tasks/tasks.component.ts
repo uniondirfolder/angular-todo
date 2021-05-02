@@ -40,7 +40,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   constructor(
     private dataHandler: DataHandlerService, // доступ к данным
     private dialog: MatDialog, // работа с диалоговым окном
-    ) {
+  ) {
   }
 
   ngOnInit(): void {
@@ -58,7 +58,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   // демонструє справи з застосуванням усіх поточних вимог (категорія, пошук, фільтри і т.інш)
-  private fillTable():void {
+  private fillTable(): void {
     if (!this.dataSource) { return; }
 
     this.dataSource.data = this.tasks; // оновити джерело даних (дані масиву task оновилися)
@@ -117,10 +117,14 @@ export class TasksComponent implements OnInit, AfterViewInit {
   //диалоговое окно редактирования - для добавления задачи
   openEditTaskDialog(task: Task): void {
     // открытие диалогового окна
-    const dialogRef = this.dialog.open(EditTaskDialogComponent, {data:[task, 'Редагування справи'], autoFocus: false});
-    
-    dialogRef.afterClosed().subscribe(result=>{
+    const dialogRef = this.dialog.open(EditTaskDialogComponent, { data: [task, 'Редагування справи'], autoFocus: false });
+
+    dialogRef.afterClosed().subscribe(result => {
       //  обработка результатов
+      if (result as Task) {// if press OK and income Task
+        this.updateTask.emit(task);
+        return;
+      }
     });
   }
 }

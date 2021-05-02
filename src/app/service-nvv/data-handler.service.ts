@@ -55,6 +55,9 @@ export class DataHandlerService {
   getAllCategories(): Observable<Category[]> {
     return this.categoryDaoArray.getAll();
   }
+  updateTask(task: Task): Observable<Task> {
+    return this.taskDaoArray.update(task);
+  }
   // поиск задач по параметрам
   searchTasks(category: Category | boolean, searchText: string | boolean, status: boolean | string, priority: Priority | boolean): Observable<Task[]> {
     return this.taskDaoArray.search(category, searchText, status, priority);

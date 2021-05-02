@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-//import { FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,6 +18,10 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { HttpClientModule } from '@angular/common/http';
 import { EditTaskDialogComponent } from './dialog/edit-task-dialog/edit-task-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -34,13 +38,16 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    MatDialogModule,
     BrowserAnimationsModule,
-    AppRoutingModule,
-    //FormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    FormsModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
     // MaterialModule,
+    AppRoutingModule,
     HttpClientModule
-
   ],
   providers: [],
   entryComponents:[

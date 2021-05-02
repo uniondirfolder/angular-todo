@@ -1,1 +1,27 @@
-<p>{{textMsg}}</p>
+<!-- редактирование/создание задачи-->
+<!-- class="dialog-task-title" -->
+<mat-dialog-content>
+    <p mat-dialog-title>{{dialogTitle}}</p>
+    <!-- название задачи -->
+    <mat-form-field>
+        <mat-lable>Назва обов*язково</mat-lable>
+        <input #inputTitle matInput [(ngModel)]="tmpTitle" (keydown.enter)="onConfirm()">
+        <button *ngIf="tmpTitle.trim().length > 0"
+            mut-button matSuffix mat-icon-button aria-lable="Clear"
+            (click)="tmpTitle=''" class="size25">
+            <mat-icon>clear</mat-icon>
+        </button>
+    </mat-form-field>
+</mat-dialog-content>
+
+<!-- кнопки возможных действий -->
+<mat-dialog-action>
+    <button>
+        <mat-raised-button color="primary"
+        (click)="onConfirm()"
+        [disabled]="inputTitle.value.trim().length==0"><!-- if text is empty -> button will be no active -->
+        Зберегти
+    </button>
+
+    <button mat-raiser-button (click)="onCancel()">Відміна</button>
+</mat-dialog-action>

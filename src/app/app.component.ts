@@ -34,7 +34,14 @@ export class AppComponent implements OnInit {
       .subscribe((tasks: Task[]) => { this.tasks = this.tasks });
   }
   onUpdateTask(task: Task) {
-    console.log(task);
+
+    this.dataHandler.updateTask(task).subscribe(// for easy mind - not good practice
+      ()=>{
+      this.dataHandler.searchTasks(
+        this.selectedCategory,false,"",false).subscribe(tasks=>{
+          this.tasks=tasks;
+        });
+    });
   }
   sendRequest() {
     this.http.get('', { params: {} }).subscribe(result => console.log(result))
