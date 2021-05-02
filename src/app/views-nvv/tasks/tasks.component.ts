@@ -1,7 +1,9 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { EditTaskDialogComponent } from 'src/app/dialog/edit-task-dialog/edit-task-dialog.component';
 import { Task } from 'src/app/model-nvv/Task';
 import { DataHandlerService } from 'src/app/service-nvv/data-handler.service';
 
@@ -35,7 +37,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
   updateTask = new EventEmitter<Task>();
 
 
-  constructor(private dataHandler: DataHandlerService) {
+  constructor(
+    private dataHandler: DataHandlerService, // доступ к данным
+    private dialog: MatDialog, // работа с диалоговым окном
+    ) {
   }
 
   ngOnInit(): void {
@@ -53,7 +58,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   // демонструє справи з застосуванням усіх поточних вимог (категорія, пошук, фільтри і т.інш)
-  private fillTable() {
+  private fillTable():void {
     if (!this.dataSource) { return; }
 
     this.dataSource.data = this.tasks; // оновити джерело даних (дані масиву task оновилися)
@@ -100,11 +105,22 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
 
-  private addTableObjects() {
+  private addTableObjects(): void {
     this.dataSource.sort = this.sort; // компонент сортування даних (за потреби)
     this.dataSource.paginator = this.paginator; // оновити компонент поділу на сторінки
   }
-  onClickTask(task: Task){
+
+  /* onClickTask(task: Task): void{
     this.updateTask.emit(task);
+  } */
+
+  //диалоговое окно редактирования - для добавления задачи
+  openEditTaskDialog(task: Task): void {
+    // открытие диалогового окна
+    const dialogRef = this.dialog.open(EditTaskDialogComponent, {data:[task, 'Редагування справи'], autoFocus: false});
+    
+    dialogRef.afterClosed().subscribe(result=>{
+      //  обработка результатов
+    });
   }
 }

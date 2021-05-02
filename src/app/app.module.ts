@@ -16,12 +16,15 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 // import { TodoListItemComponent } from './auditorium/components/todo-list-item/todo-list-item/todo-list-item.component';
 // import { TaskComponent } from './auditorium/components/task/task.component';
 import { HttpClientModule } from '@angular/common/http';
+import { EditTaskDialogComponent } from './dialog/edit-task-dialog/edit-task-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
     AppComponent,
     CategoriesComponent,
     TasksComponent,
+    EditTaskDialogComponent,
     // TodoItemComponent,
     // TodoListItemComponent,
     // TaskComponent,
@@ -30,8 +33,8 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule,
     MatTableModule,
     MatSortModule,
-    MatSortModule,
     MatPaginatorModule,
+    MatDialogModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     //FormsModule,
@@ -40,6 +43,9 @@ import { HttpClientModule } from '@angular/common/http';
 
   ],
   providers: [],
+  entryComponents:[
+    EditTaskDialogComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
