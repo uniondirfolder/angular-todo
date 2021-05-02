@@ -48,7 +48,8 @@ export class TaskDAOArray implements TaskDAO {
 
     update(arg: Task): Observable<Task> {
         const taskTmp = TestData.tasks.find(t => t.id === arg.id);
-        if (taskTmp) TestData.tasks.splice(TestData.tasks.indexOf(taskTmp), 1, arg);
+        if (taskTmp!=undefined) TestData.tasks.splice(TestData.tasks.indexOf(taskTmp), 1, arg);
+        console.log(arg)
         return of(arg);
     }
 

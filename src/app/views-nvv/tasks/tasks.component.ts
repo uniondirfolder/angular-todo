@@ -38,7 +38,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
 
   constructor(
-    private dataHandler: DataHandlerService, // доступ к данным
+    //private dataHandler: DataHandlerService, // доступ к данным
     private dialog: MatDialog, // работа с диалоговым окном
   ) {
   }
@@ -121,8 +121,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       //  обработка результатов
+      
       if (result as Task) {// if press OK and income Task
-        this.updateTask.emit(task);
+        this.updateTask.emit(task);    
         return;
       }
     });
