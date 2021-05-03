@@ -30,6 +30,7 @@ import { TaskDatePipe } from './pipe/task-date.pipe';
 
 import { registerLocaleData } from '@angular/common';
 import localeUk from '@angular/common/locales/uk';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 registerLocaleData(localeUk); 
 
@@ -61,6 +62,7 @@ registerLocaleData(localeUk);
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatCheckboxModule,
     // MaterialModule,
     AppRoutingModule,
     HttpClientModule

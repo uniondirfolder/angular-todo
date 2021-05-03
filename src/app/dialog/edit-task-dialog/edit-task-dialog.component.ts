@@ -15,15 +15,15 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 // редактирование/создание задачи
 export class EditTaskDialogComponent implements OnInit {
 
-  dialogTitle: string = ""; // заголовок окна
-  task: Task = new Task(0, "", false); // задача для редактирования/создания
+  dialogTitle = ''; // заголовок окна
+  task: Task = new Task(0, '', false); // задача для редактирования/создания
   categories: Category[] = [];
   priorities: Priority[] = [];
 
-  tmpTitle: string = ""; // читаем сохраняем через посредника
-  tmpCategory: Category = new Category(0, "");
-  tmpPriority: Priority = new Priority(0, "", "");
-  tmpDate: string = "";
+  tmpTitle = ''; // читаем сохраняем через посредника
+  tmpCategory: Category = new Category(0, '');
+  tmpPriority: Priority = new Priority(0, '', '');
+  tmpDate = '';
 
   constructor(
     private dialogRef: MatDialogRef<EditTaskDialogComponent>, // для взаимодействии с текущим д/а
@@ -37,9 +37,9 @@ export class EditTaskDialogComponent implements OnInit {
     this.task = this.data[0];
 
     this.tmpTitle = this.task.title;
-    if (this.task.category != undefined) { this.tmpCategory = this.task.category };
-    if (this.task.priority != undefined) { this.tmpPriority = this.task.priority };
-    if (this.task.date != undefined) { this.tmpDate = this.task.date.toString() };
+    if (this.task.category !== undefined) { this.tmpCategory = this.task.category; }
+    if (this.task.priority !== undefined) { this.tmpPriority = this.task.priority; }
+    if (this.task.date !== undefined) { this.tmpDate = this.task.date.toString(); }
 
     this.dataHandler.getAllCategories().subscribe(items => this.categories = items);
     this.dataHandler.getAllPriorities().subscribe(items => this.priorities = items);
@@ -70,7 +70,7 @@ export class EditTaskDialogComponent implements OnInit {
       if (result) {
         this.dialogRef.close('delete');
       }
-    })
+    });
   }
   onComplete(): void {
     this.dialogRef.close('complete');

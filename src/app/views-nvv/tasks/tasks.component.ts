@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { EditTaskDialogComponent } from 'src/app/dialog/edit-task-dialog/edit-task-dialog.component';
 import { Task } from 'src/app/model-nvv/Task';
 import { DataHandlerService } from 'src/app/service-nvv/data-handler.service';
+import { ConfirmDialogComponent } from '../../dialog/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-tasks',
@@ -15,7 +16,7 @@ import { DataHandlerService } from 'src/app/service-nvv/data-handler.service';
 export class TasksComponent implements OnInit, AfterViewInit {
 
   //  поля для таблиці (ті, що відібражають дані з справи - повинні співпадати з назвами зміних класу)
-  displayedColumns: string[] = ['color', 'id', 'title', 'date', 'priority', 'category'];
+  displayedColumns: string[] = ['color', 'id', 'title', 'date', 'priority', 'category', 'operations', 'select'];
 
   // обов*язковий елемент, любе джерело даних (БД, масиви, JSON ...)
   dataSource: MatTableDataSource<Task> = new MatTableDataSource(); // контейнер - джерело даних таблиці
@@ -41,7 +42,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   constructor(
     //private dataHandler: DataHandlerService, // доступ к данным
-    private dialog: MatDialog, // работа с диалоговым окном
+    private dialog: MatDialog, // для открытия нового д/а (из текущего) - подтверждения crud
   ) {
   }
 
@@ -50,8 +51,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     // this.dataHandler.taskSubject.subscribe(tasks => this.tasks = tasks);
     // this.dataHandler.getAllTasks().subscribe(tasks => this.tasks = tasks);
 
-    // this.dataSource = new MatTableDataSource();
-
+    this.dataSource = new MatTableDataSource();
     this.fillTable(); // заполняем таблицы данными (задачи) и всеми метаданными
   }
 
@@ -71,26 +71,26 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
       switch (colName) {
         case 'priority': {
-          return task.priority ? task.priority.id : "";
+          return task.priority ? task.priority.id : '';
         }
 
         case 'category': {
-          return task.category ? task.category.title : "";
+          return task.category ? task.category.title : '';
         }
 
         case 'date': {
-          return task.date ? task.date.toString() : "";
+          return task.date ? task.date.toString() : '';
         }
 
         case 'title': {
           return task.title;
         }
       }
-      return "";
-    }
+      return '';
+    };
   }
 
-  toggleTaskCompleted(task: Task): void {
+  private toggleTaskCompleted(task: Task): void {
     task.completed = !task.completed;
   }
 
@@ -106,7 +106,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
     return '#fff'; // TODO винести кольора до констант (magic string...)
   }
 
-
   private addTableObjects(): void {
     this.dataSource.sort = this.sort; // компонент сортування даних (за потреби)
     this.dataSource.paginator = this.paginator; // оновити компонент поділу на сторінки
@@ -116,18 +115,17 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.updateTask.emit(task);
   } */
 
-  //диалоговое окно редактирования - для добавления задачи
+  // диалоговое окно редактирования - для добавления задачи
   openEditTaskDialog(task: Task): void {
     // открытие диалогового окна
     const dialogRef = this.dialog.open(EditTaskDialogComponent, { data: [task, 'Редагування завдання'], autoFocus: false });
 
     dialogRef.afterClosed().subscribe(result => {
       //  обработка результатов
-
       if (result === 'complete') {
         task.completed = true;
         this.updateTask.emit(task);
-        //return;
+        return;
       }
 
       if (result === 'activate') {
@@ -146,5 +144,56 @@ export class TasksComponent implements OnInit, AfterViewInit {
         return;
       }
     });
+  }
+  // диалоговое окно подтверждения удаления
+  // tslint:disable-next-line:typedef
+  onOpenDeleteDialog(task: Task) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent,
+      {
+        maxWidth: '500px', data: {
+          dialogTitle: 'Підтвердіть дію',
+          message: `Ви дійсно бажаєте видалити завдання: "${task.title}"?`
+        },
+        autoFocus: false
+      });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deleteTask.emit(task);
+      }
+    });
+  }
+
+  onOpenEditDialog(task: Task): void {
+    // открытие диалогового окна
+    const dialogRef = this.dialog.open(EditTaskDialogComponent, {
+      data: [task, 'Редагування завдання'],
+      autoFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'complete') {
+        task.completed = true;
+        this.updateTask.emit(task);
+      }
+      if (result === 'activate') {
+        task.completed = false;
+        this.updateTask.emit(task);
+        return;
+      }
+      if (result === 'delete') {
+        this.deleteTask.emit(task);
+        return;
+      }
+      if (result as Task) {
+        this.updateTask.emit(task);
+        return;
+      }
+    });
+  }
+
+  onToggleStatus(task: Task): void {
+    this.toggleTaskCompleted(task);
+    this.updateTask.emit(task);
   }
 }
