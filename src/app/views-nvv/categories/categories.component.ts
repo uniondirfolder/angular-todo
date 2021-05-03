@@ -29,7 +29,7 @@ export class CategoriesComponent implements OnInit {
 
 
 
-  showTasksByCategory(category: Category) {
+  showTasksByCategory(category: Category): void {
     //this.dataHandler.getTasksByCategory(category);
     // this.dataHandler.fillTasksByCategory(category);
 
@@ -38,5 +38,9 @@ export class CategoriesComponent implements OnInit {
     this.selectedCategory = category; // сохраняем выбраную категорию
 
     this.selectCategory.emit(this.selectedCategory); // вызываем внешний обработчик и передаем туда выбраную категорию
+  }
+  showAllTasksCategories(): void{
+    this.selectedCategory = new Category(0, "");
+    this.selectCategory.emit(this.selectedCategory);
   }
 }

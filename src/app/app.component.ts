@@ -29,16 +29,20 @@ export class AppComponent implements OnInit {
 
   onSelectCategory(category: Category) {
     this.selectedCategory = category;
-
-    this.dataHandler.searchTasks(this.selectedCategory, false, "false", false)
-      .subscribe((tasks: Task[]) => { this.tasks = tasks });
+    if (this.selectedCategory.id === 0) {
+      this.dataHandler.searchTasks(false, false, "false", false)
+        .subscribe((tasks: Task[]) => { this.tasks = tasks });
+    } else {
+      this.dataHandler.searchTasks(this.selectedCategory, false, "false", false)
+        .subscribe((tasks: Task[]) => { this.tasks = tasks });
+    }
   }
   onUpdateTask(task: Task) {
 
     this.dataHandler.updateTask(task).subscribe(// for easy mind - not good practice
       () => {
         //console.log(task.category)
-        if(task.category){this.selectedCategory = task.category} // all bad... not shure
+        if (task.category) { this.selectedCategory = task.category } // all bad... not shure
         this.dataHandler.searchTasks(
           this.selectedCategory, false, "false", false).subscribe(tasks => {
             this.tasks = tasks;
@@ -50,7 +54,7 @@ export class AppComponent implements OnInit {
     this.dataHandler.deleteTask(task).subscribe(// for easy mind - not good practice
       () => {
         //console.log(task.category)
-        if(task.category){this.selectedCategory = task.category} // all bad... not shure
+        if (task.category) { this.selectedCategory = task.category } // all bad... not shure
         this.dataHandler.searchTasks(
           this.selectedCategory, false, "false", false).subscribe(tasks => {
             this.tasks = tasks;
