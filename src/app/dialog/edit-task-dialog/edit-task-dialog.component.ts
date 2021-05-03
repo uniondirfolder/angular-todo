@@ -23,6 +23,7 @@ export class EditTaskDialogComponent implements OnInit {
   tmpTitle: string = ""; // читаем сохраняем через посредника
   tmpCategory: Category = new Category(0, "");
   tmpPriority: Priority = new Priority(0, "", "");
+  tmpDate: string = "";
 
   constructor(
     private dialogRef: MatDialogRef<EditTaskDialogComponent>, // для взаимодействии с текущим д/а
@@ -38,6 +39,7 @@ export class EditTaskDialogComponent implements OnInit {
     this.tmpTitle = this.task.title;
     if (this.task.category != undefined) { this.tmpCategory = this.task.category };
     if (this.task.priority != undefined) { this.tmpPriority = this.task.priority };
+    if (this.task.date != undefined) { this.tmpDate = this.task.date.toString() };
 
     this.dataHandler.getAllCategories().subscribe(items => this.categories = items);
     this.dataHandler.getAllPriorities().subscribe(items => this.priorities = items);
@@ -46,6 +48,7 @@ export class EditTaskDialogComponent implements OnInit {
     this.task.title = this.tmpTitle;
     this.task.category = this.tmpCategory;
     this.task.priority = this.tmpPriority;
+    this.task.date = new Date(this.tmpDate);
     // передаем добавленую/измененную задачу в обработчик
     // что с ним будут делать - уже не задача этого компонента
     this.dialogRef.close(this.task);
