@@ -16,7 +16,7 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 export class EditTaskDialogComponent implements OnInit {
 
   dialogTitle: string = ""; // заголовок окна
-  private task: Task = new Task(0, "", false); // задача для редактирования/создания
+  task: Task = new Task(0, "", false); // задача для редактирования/создания
   categories: Category[] = [];
   priorities: Priority[] = [];
 
@@ -68,5 +68,11 @@ export class EditTaskDialogComponent implements OnInit {
         this.dialogRef.close('delete');
       }
     })
+  }
+  onComplete(): void {
+    this.dialogRef.close('complete');
+  }
+  onActivate(): void {
+    this.dialogRef.close('activate');
   }
 }
