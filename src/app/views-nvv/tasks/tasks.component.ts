@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { EditTaskDialogComponent } from 'src/app/dialog/edit-task-dialog/edit-task-dialog.component';
+import { Category } from 'src/app/model-nvv/Category';
 import { Task } from 'src/app/model-nvv/Task';
 import { DataHandlerService } from 'src/app/service-nvv/data-handler.service';
 import { ConfirmDialogComponent } from '../../dialog/confirm-dialog/confirm-dialog.component';
@@ -39,6 +40,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   @Output()
   deleteTask = new EventEmitter<Task>();
+
+  @Output()
+  selectCategory = new EventEmitter<Category>(); // клацнули на категорію з списку завдань
 
   constructor(
     //private dataHandler: DataHandlerService, // доступ к данным
@@ -195,5 +199,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
   onToggleStatus(task: Task): void {
     this.toggleTaskCompleted(task);
     this.updateTask.emit(task);
+  }
+
+  onSelectCategory(category: Category) {
+    this.selectCategory.emit(category);
   }
 }

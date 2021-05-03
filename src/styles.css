@@ -33,3 +33,8 @@
 .green{
     color: green;
 }
+
+.link{
+    text-decoration: underline;
+    cursor: pointer;
+}

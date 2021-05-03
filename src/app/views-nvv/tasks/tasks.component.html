@@ -51,7 +51,8 @@
       <ng-container matColumnDef="category">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>Категорія</th>
         <td class="col-category" *matCellDef="let task"
-          [ngClass]="{'completed': task.completed, 'novalue': task.category == null}" mat-cell>
+          [ngClass]="{'completed': task.completed, 'novalue': task.category == null, 'link': !task.completed && task.category}"
+          (click)="!task.completed && task.category && onSelectCategory(task.category)" mat-cell>
           {{task.category ? task.category.title : "немає"}}
         </td>
       </ng-container>
