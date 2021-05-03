@@ -42,14 +42,15 @@ export class TaskDAOArray implements TaskDAO {
         return of(TestData.tasks.find(todo => todo.id === id));
     }
 
-    delete(id: number): Observable<Task> {
-        throw new Error("Method not implemented.");
+    delete(arg: Task): Observable<Task> {
+        const taskTmp = TestData.tasks.find(t => t.id === arg.id);
+        if (taskTmp != undefined) TestData.tasks.splice(TestData.tasks.indexOf(taskTmp), 1);
+        return of(arg);
     }
 
     update(arg: Task): Observable<Task> {
         const taskTmp = TestData.tasks.find(t => t.id === arg.id);
-        if (taskTmp!=undefined) TestData.tasks.splice(TestData.tasks.indexOf(taskTmp), 1, arg);
-        console.log(arg)
+        if (taskTmp != undefined) TestData.tasks.splice(TestData.tasks.indexOf(taskTmp), 1, arg);
         return of(arg);
     }
 

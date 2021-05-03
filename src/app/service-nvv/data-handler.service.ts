@@ -63,6 +63,9 @@ export class DataHandlerService {
   updateTask(task: Task): Observable<Task> {
     return this.taskDaoArray.update(task);
   }
+  deleteTask(task: Task): Observable<Task> {
+    return this.taskDaoArray.delete(task);
+  }
   // поиск задач по параметрам
   searchTasks(category: Category | boolean, searchText: string | boolean, status: boolean | string, priority: Priority | boolean): Observable<Task[]> {
     return this.taskDaoArray.search(category, searchText, status, priority);

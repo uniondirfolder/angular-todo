@@ -87,7 +87,9 @@
           <div class="col-md-12">
 
             <app-tasks [tasks]="tasks"
-            (updateTask)="onUpdateTask($event)"></app-tasks>
+            (updateTask)="onUpdateTask($event)"
+            (deleteTask)="onDeleteTask($event)"
+            [tasks]="tasks"></app-tasks>
 
           </div>
         </div>

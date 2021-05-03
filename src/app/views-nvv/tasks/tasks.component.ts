@@ -36,6 +36,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
   @Output()
   updateTask = new EventEmitter<Task>();
 
+  @Output()
+  deleteTask = new EventEmitter<Task>();
 
   constructor(
     //private dataHandler: DataHandlerService, // доступ к данным
@@ -117,13 +119,18 @@ export class TasksComponent implements OnInit, AfterViewInit {
   //диалоговое окно редактирования - для добавления задачи
   openEditTaskDialog(task: Task): void {
     // открытие диалогового окна
-    const dialogRef = this.dialog.open(EditTaskDialogComponent, { data: [task, 'Редагування справи'], autoFocus: false });
+    const dialogRef = this.dialog.open(EditTaskDialogComponent, { data: [task, 'Редагування завдання'], autoFocus: false });
 
     dialogRef.afterClosed().subscribe(result => {
       //  обработка результатов
-      
+
+      if (result === 'delete') {
+        this.deleteTask.emit(task);
+        return;
+      }
+
       if (result as Task) {// if press OK and income Task
-        this.updateTask.emit(task);    
+        this.updateTask.emit(task);
         return;
       }
     });

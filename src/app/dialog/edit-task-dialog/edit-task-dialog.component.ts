@@ -4,6 +4,7 @@ import { Category } from 'src/app/model-nvv/Category';
 import { Priority } from 'src/app/model-nvv/Priority';
 import { Task } from 'src/app/model-nvv/Task';
 import { DataHandlerService } from 'src/app/service-nvv/data-handler.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -51,5 +52,21 @@ export class EditTaskDialogComponent implements OnInit {
   }
   onCancel(): void {
     this.dialogRef.close(null);
+  }
+  onDelete(): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent,
+      {
+        maxWidth: '500px', data: {
+          dialogTitle: 'Підтвердіть дію',
+          message: `Ви дійсно бажаєте видалити завдання: "${this.task.title}"?`
+        },
+        autoFocus: false
+      });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.dialogRef.close('delete');
+      }
+    })
   }
 }

@@ -45,6 +45,20 @@ export class AppComponent implements OnInit {
           });
       });
   }
+  onDeleteTask(task: Task) {
+
+    this.dataHandler.deleteTask(task).subscribe(// for easy mind - not good practice
+      () => {
+        //console.log(task.category)
+        if(task.category){this.selectedCategory = task.category} // all bad... not shure
+        this.dataHandler.searchTasks(
+          this.selectedCategory, false, "false", false).subscribe(tasks => {
+            this.tasks = tasks;
+          });
+      });
+  }
+
+
   sendRequest() {
     this.http.get('', { params: {} }).subscribe(result => console.log(result))
   }

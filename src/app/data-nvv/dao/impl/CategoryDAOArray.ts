@@ -13,7 +13,7 @@ export class CategoryDAOArray implements CategoryDAO{
     get(id: number): Observable<Category> {
         throw new Error("Method not implemented.");
     }
-    delete(id: number): Observable<Category> {
+    delete(arg: Category): Observable<Category> {
         throw new Error("Method not implemented.");
     }
     update(arg: Category): Observable<Category> {

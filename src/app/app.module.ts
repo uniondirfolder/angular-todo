@@ -24,6 +24,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
+import { ConfirmDialogComponent } from './dialog/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { MatSelectModule } from '@angular/material/select';
     CategoriesComponent,
     TasksComponent,
     EditTaskDialogComponent,
+    ConfirmDialogComponent,
     // TodoItemComponent,
     // TodoListItemComponent,
     // TaskComponent,
@@ -54,8 +56,9 @@ import { MatSelectModule } from '@angular/material/select';
     HttpClientModule
   ],
   providers: [],
-  entryComponents:[
-    EditTaskDialogComponent
+  entryComponents: [
+    EditTaskDialogComponent,
+    ConfirmDialogComponent,
   ],
   bootstrap: [AppComponent]
 })
