@@ -3,7 +3,7 @@ import { Category } from "src/app/model-nvv/Category";
 import { TestData } from "../../TestData";
 import { CategoryDAO } from "../interface/CategoryDAO";
 
-export class CategoryDAOArray implements CategoryDAO{
+export class CategoryDAOArray implements CategoryDAO {
     search(title: string): Observable<Category[]> {
         throw new Error("Method not implemented.");
     }
@@ -14,10 +14,24 @@ export class CategoryDAOArray implements CategoryDAO{
         throw new Error("Method not implemented.");
     }
     delete(arg: Category): Observable<Category> {
-        throw new Error("Method not implemented.");
+        // перед удалением - нужно в задачах занулить все ссылки на удаленное значение
+        // в реальной БД сама обновляет все ссылки (cascade update) - здесь нам приходится делать это вручную (т.к. вместо БД - массив)
+        TestData.tasks.forEach(task => {
+            if (task.category && task.category.id === arg.id) {
+                task.category = undefined;
+            }
+        });
+
+        const tmpCategory = TestData.categories.find(t => t.id === arg.id); // удаляем по id
+        if (tmpCategory != undefined) TestData.categories.splice(TestData.categories.indexOf(tmpCategory), 1);
+
+        return of(arg);
     }
     update(arg: Category): Observable<Category> {
-        throw new Error("Method not implemented.");
+        const tmpCategory = TestData.categories.find(t => t.id === arg.id); // обновляем по id
+        if (tmpCategory != undefined) TestData.categories.splice(TestData.categories.indexOf(tmpCategory), 1, arg);
+
+        return of(arg);
     }
     getAll(): Observable<Category[]> {
         return of(TestData.categories);

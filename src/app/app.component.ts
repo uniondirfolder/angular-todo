@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
   title = 'angular-todo';
   tasks: Task[] = [];
   categories: Category[] = [];
-  private selectedCategory: Category = new Category(0, "");
+  selectedCategory: Category = new Category(0, "");
 
   constructor(
     private dataHandler: DataHandlerService, // фасад для работы с данными
@@ -37,8 +37,7 @@ export class AppComponent implements OnInit {
         .subscribe((tasks: Task[]) => { this.tasks = tasks });
     }
   }
-  onUpdateTask(task: Task) {
-
+  onUpdateTask(task: Task) {// обновление задачи
     this.dataHandler.updateTask(task).subscribe(// for easy mind - not good practice
       () => {
         //console.log(task.category)
@@ -49,8 +48,7 @@ export class AppComponent implements OnInit {
           });
       });
   }
-  onDeleteTask(task: Task) {
-
+  onDeleteTask(task: Task) { // удаление задачи
     this.dataHandler.deleteTask(task).subscribe(// for easy mind - not good practice
       () => {
         //console.log(task.category)
@@ -62,7 +60,18 @@ export class AppComponent implements OnInit {
       });
   }
 
-
+  onDeleteCategory(category: Category) { // удаление категории
+    this.dataHandler.deleteCategory(category).subscribe(cat => {
+      this.selectedCategory.id = 0; // открываем категорию "Все"
+      this.selectedCategory.title = '';
+      this.onSelectCategory(this.selectedCategory);
+    });
+  }
+  onUpdateCategory(category: Category) { // обновлении категории
+    this.dataHandler.updateCategory(category).subscribe(() => {
+      this.onSelectCategory(this.selectedCategory);
+    });
+  }
   sendRequest() {
     this.http.get('', { params: {} }).subscribe(result => console.log(result))
   }

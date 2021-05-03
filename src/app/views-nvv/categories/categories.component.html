@@ -8,7 +8,7 @@
   <div class="sidebar-wrapper">
     <ul class="nav">
 
-      <li class="nav-item category" (click)="showAllTasksCategories()" [class.active]="selectedCategory.id === 0">
+      <li class="nav-item category" (click)="onShowAllTasksCategories()" [class.active]="selectedCategory.id === 0">
         <a class="nav-link pointer">
           <span class="all-category-title">Усі</span>
         </a>
@@ -16,11 +16,22 @@
 
       <div class="line"></div>
 
-      <li (click)="showTasksByCategory(category)" *ngFor="let category of categories" class="nav-item pointer"
-        [class.active]="category === selectedCategory">
+      <li (click)="onShowTasksByCategory(category)" 
+        *ngFor="let category of categories; let index=index" 
+        class="nav-item pointer"
+        [class.active]="category === selectedCategory"
+        (mouseleave)="onShowEditIcon(-1)"
+        (mouseenter)="onShowEditIcon(index)">
 
         <a class="nav-link">
-          <p>{{category.title}}</p>
+          <span class="category-title">{{category.title}}</span>
+          <span class="edit-category-icon-aria">
+            <mat-icon 
+            (click)="$event.stopPropagation(); onOpenEditDialog(category)" 
+            *ngIf="indexMouseMove === index" 
+            class="edit-category-icon">edit</mat-icon>
+          </span>
+          
         </a>
 
       </li>

@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { EditCategoryDialogComponent } from 'src/app/dialog/edit-category-dialog/edit-category-dialog.component';
 import { Category } from 'src/app/model-nvv/Category';
 import { DataHandlerService } from 'src/app/service-nvv/data-handler.service';
 
@@ -15,10 +17,21 @@ export class CategoriesComponent implements OnInit {
   @Output()
   selectCategory = new EventEmitter<Category>();
 
+  @Output()
+  deleteCategory = new EventEmitter<Category>();
+
+  @Output()
+  updateCategory = new EventEmitter<Category>();
+
   @Input()
   selectedCategory: Category = new Category(0, "");
 
-  constructor(private dataHandler: DataHandlerService) { }
+  indexMouseMove: number = 0;
+
+  constructor(
+    private dataHandler: DataHandlerService,
+    private dialog: MatDialog, // внедряем MatDialog, чтобы работать с диалоговыми окнами
+  ) { }
 
   ngOnInit(): void {
     // this.categories = this.dataHandler.getCategories();
@@ -26,10 +39,7 @@ export class CategoriesComponent implements OnInit {
     // this.dataHandler.getAllCategories().subscribe(catigories => this.categories = catigories); инициатором получения данных стал app.component
   }
 
-
-
-
-  showTasksByCategory(category: Category): void {
+  onShowTasksByCategory(category: Category): void {
     //this.dataHandler.getTasksByCategory(category);
     // this.dataHandler.fillTasksByCategory(category);
 
@@ -39,8 +49,36 @@ export class CategoriesComponent implements OnInit {
 
     this.selectCategory.emit(this.selectedCategory); // вызываем внешний обработчик и передаем туда выбраную категорию
   }
-  showAllTasksCategories(): void{
-    this.selectedCategory = new Category(0, "");
+  onShowAllTasksCategories(): void {
+    this.selectedCategory.id = 0;
+    this.selectedCategory.title = '';
     this.selectCategory.emit(this.selectedCategory);
   }
+  onShowEditIcon(index: number): void {
+    this.indexMouseMove = index;
+  }
+  onOpenEditDialog(category: Category): void {
+    const dialogRef = this.dialog.open(EditCategoryDialogComponent, {
+      data: [category.title, 'Редагування категорії'],
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (result === 'delete') { // нажали удалить
+
+        this.deleteCategory.emit(category); // вызываем внешний обработчик
+
+        return;
+      }
+
+      if (result as string) { // нажали сохранить
+        category.title = result as string;
+
+        this.updateCategory.emit(category); // вызываем внешний обработчик
+        return;
+      }
+    });
+  }
+
 }
