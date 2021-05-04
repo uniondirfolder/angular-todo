@@ -15,7 +15,7 @@
   <div class="col-md-3 col-sm-12">
     <!-- фільтр по статусу -->
     <mat-form-field>
-      <mat-select #statusFilter (valueChange)="onFilterByStatus($event)" [value]="filter"
+      <mat-select #statusFilter (valueChange)="onFilterByStatus($event)" [(value)]="filter"
         placeholder="Фільтр по статусу">
         <!-- <mat-option [value]="null">Всі статуси</mat-option> -->
         <mat-option [value]="true">Виконані завдання</mat-option>

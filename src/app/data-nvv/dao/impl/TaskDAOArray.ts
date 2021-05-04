@@ -9,14 +9,11 @@ import { TaskDAO } from "../interface/TaskDAO";
 
 export class TaskDAOArray implements TaskDAO {
     search(category: Category | NoValue, searchText: string | NoValue, status: boolean | FilterStateTask, priority: Priority | NoValue): Observable<Task[]> {
-        console.log(category);
-        console.log(searchText);
-        console.log(status);
         return of(this.searchTasks(category, searchText, status, priority));
     }
     private searchTasks(category: Category | NoValue, searchText: string | NoValue, status: boolean | FilterStateTask, priority: Priority | NoValue): Task[] {
         let allTasks = TestData.tasks;
-        console.log('xxx');
+        
         if (typeof (status) !== 'string') { // costyl :)
             allTasks = allTasks.filter(task => task.completed === status);
         }

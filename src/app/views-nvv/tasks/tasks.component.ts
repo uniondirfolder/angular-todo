@@ -37,7 +37,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.fillTable();
   }
 
-  @Output()
+  @Output() 
   updateTask = new EventEmitter<Task>();
 
   @Output()
@@ -57,6 +57,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   selectedStatusFilter: FilterStateTask = FilterStateTask.All;   // по-умолчанию будут показываться задачи по всем статусам (решенные и нерешенные)
 
+  @Input()
   filter: string = '';
   constructor(
     //private dataHandler: DataHandlerService, // доступ к данным
@@ -227,7 +228,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   // фільтрація по статусу
   onFilterByStatus(value: any): void {
 
-    if (typeof (value) === 'string') { this.selectedStatusFilter = FilterStateTask.All; this.filter=''; }
+    if (typeof (value) === 'string') { this.selectedStatusFilter = FilterStateTask.All; }
     if (typeof (value) === 'boolean') {
       const chose = <Boolean>value;
       if (chose) { this.selectedStatusFilter = FilterStateTask.Solved; }
@@ -238,6 +239,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
       // this.selectedStatusFilter = value;
 
     }
+    if (this.selectedStatusFilter == FilterStateTask.All) { this.filter = ''; }
     this.filterByStatus.emit(this.selectedStatusFilter);
   }
 }

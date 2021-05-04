@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FilterStateTask } from './data-nvv/dao/enum/FilterStateTasks';
 import { NoValue } from './data-nvv/dao/enum/NoValue';
 import { Category } from './model-nvv/Category';
@@ -35,9 +35,6 @@ export class AppComponent implements OnInit {
   }
 
   private updateTasks() {
-    console.log(this.selectedCategory);
-    console.log(this.searchTaskText);
-    console.log(this.statusFilter);
     this.dataHandler.searchTasks(
       this.selectedCategory,
       this.searchTaskText,
@@ -50,6 +47,7 @@ export class AppComponent implements OnInit {
 
   // зміна категорії
   onSelectCategory(category: Category) {
+    console.log(category.id)
     this.selectedCategory = category;
     this.updateTasks();
   }
@@ -58,6 +56,7 @@ export class AppComponent implements OnInit {
   onDeleteCategory(category: Category) {
     this.dataHandler.deleteCategory(category).subscribe(cat => {
       this.selectedCategory.id = 0; // відкриваємо категорію "Все"
+      this.selectedCategory.title = '';
       this.onSelectCategory(this.selectedCategory);
     });
   }
