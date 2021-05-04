@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { FilterStateTask } from 'src/app/data-nvv/dao/enum/FilterStateTasks';
 import { EditTaskDialogComponent } from 'src/app/dialog/edit-task-dialog/edit-task-dialog.component';
 import { Category } from 'src/app/model-nvv/Category';
 import { Task } from 'src/app/model-nvv/Task';
@@ -35,6 +36,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.tasks = tasks;
     this.fillTable();
   }
+
   @Output()
   updateTask = new EventEmitter<Task>();
 
@@ -44,6 +46,18 @@ export class TasksComponent implements OnInit, AfterViewInit {
   @Output()
   selectCategory = new EventEmitter<Category>(); // клацнули на категорію з списку завдань
 
+  @Output()
+  filterByTitle = new EventEmitter<string>();
+
+  @Output()
+  filterByStatus = new EventEmitter<FilterStateTask>();
+
+  // пошук
+  searchTaskText: string = ''; // текущее значение для поиска задач
+
+  selectedStatusFilter: FilterStateTask = FilterStateTask.All;   // по-умолчанию будут показываться задачи по всем статусам (решенные и нерешенные)
+
+  filter: string = '';
   constructor(
     //private dataHandler: DataHandlerService, // доступ к данным
     private dialog: MatDialog, // для открытия нового д/а (из текущего) - подтверждения crud
@@ -201,7 +215,29 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.updateTask.emit(task);
   }
 
-  onSelectCategory(category: Category) {
+  onSelectCategory(category: Category): void {
     this.selectCategory.emit(category);
+  }
+
+  // фільтрація за назвою
+  onFilterByTitle(): void {
+    this.filterByTitle.emit(this.searchTaskText);
+  }
+
+  // фільтрація по статусу
+  onFilterByStatus(value: any): void {
+
+    if (typeof (value) === 'string') { this.selectedStatusFilter = FilterStateTask.All; this.filter=''; }
+    if (typeof (value) === 'boolean') {
+      const chose = <Boolean>value;
+      if (chose) { this.selectedStatusFilter = FilterStateTask.Solved; }
+      else { this.selectedStatusFilter = FilterStateTask.Unsolved; }
+    }
+    // на всякий випадок перевіряємо чи змінилося значення (хоча сам UI компонент повинен це робити)
+    if (value !== this.selectedStatusFilter) {
+      // this.selectedStatusFilter = value;
+
+    }
+    this.filterByStatus.emit(this.selectedStatusFilter);
   }
 }

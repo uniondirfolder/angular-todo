@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FilterStateTask } from './data-nvv/dao/enum/FilterStateTasks';
+import { NoValue } from './data-nvv/dao/enum/NoValue';
 import { Category } from './model-nvv/Category';
 import { Priority } from './model-nvv/Priority';
 import { Task } from './model-nvv/Task';
@@ -17,6 +19,11 @@ export class AppComponent implements OnInit {
   categories: Category[] = [];
   selectedCategory: Category = new Category(0, "");
 
+  // пошук
+  searchTaskText = ''; // поточне значення для пошуку задач
+  // фільтрація
+  statusFilter: FilterStateTask = FilterStateTask.All;
+
   constructor(
     private dataHandler: DataHandlerService, // фасад для работы с данными
     public http: HttpClient
@@ -27,51 +34,86 @@ export class AppComponent implements OnInit {
     this.dataHandler.getAllCategories().subscribe(categories => this.categories = categories);
   }
 
-  onSelectCategory(category: Category) {
-    this.selectedCategory = category;
-    if (this.selectedCategory.id === 0) {
-      this.dataHandler.searchTasks(false, false, "false", false)
-        .subscribe((tasks: Task[]) => { this.tasks = tasks });
-    } else {
-      this.dataHandler.searchTasks(this.selectedCategory, false, "false", false)
-        .subscribe((tasks: Task[]) => { this.tasks = tasks });
-    }
-  }
-  onUpdateTask(task: Task) {// обновление задачи
-    this.dataHandler.updateTask(task).subscribe(// for easy mind - not good practice
-      () => {
-        //console.log(task.category)
-        if (task.category) { this.selectedCategory = task.category } // all bad... not shure
-        this.dataHandler.searchTasks(
-          this.selectedCategory, false, "false", false).subscribe(tasks => {
-            this.tasks = tasks;
-          });
-      });
-  }
-  onDeleteTask(task: Task) { // удаление задачи
-    this.dataHandler.deleteTask(task).subscribe(// for easy mind - not good practice
-      () => {
-        //console.log(task.category)
-        if (task.category) { this.selectedCategory = task.category } // all bad... not shure
-        this.dataHandler.searchTasks(
-          this.selectedCategory, false, "false", false).subscribe(tasks => {
-            this.tasks = tasks;
-          });
-      });
+  private updateTasks() {
+    console.log(this.selectedCategory);
+    console.log(this.searchTaskText);
+    console.log(this.statusFilter);
+    this.dataHandler.searchTasks(
+      this.selectedCategory,
+      this.searchTaskText,
+      this.statusFilter,
+      NoValue.Yes
+    ).subscribe((tasks: Task[]) => {
+      this.tasks = tasks;
+    });
   }
 
-  onDeleteCategory(category: Category) { // удаление категории
+  // зміна категорії
+  onSelectCategory(category: Category) {
+    this.selectedCategory = category;
+    this.updateTasks();
+  }
+
+  // видалення категорії
+  onDeleteCategory(category: Category) {
     this.dataHandler.deleteCategory(category).subscribe(cat => {
-      this.selectedCategory.id = 0; // открываем категорию "Все"
-      this.selectedCategory.title = '';
+      this.selectedCategory.id = 0; // відкриваємо категорію "Все"
       this.onSelectCategory(this.selectedCategory);
     });
   }
-  onUpdateCategory(category: Category) { // обновлении категории
+
+  // оновлення категорії
+  onUpdateCategory(category: Category) {
     this.dataHandler.updateCategory(category).subscribe(() => {
       this.onSelectCategory(this.selectedCategory);
     });
   }
+
+  // оновлення завдання
+  onUpdateTask(task: Task) {
+    this.dataHandler.updateTask(task).subscribe(cat => {
+      this.updateTasks()
+    });
+    /* this.dataHandler.updateTask(task).subscribe(// for easy mind - not good practice
+      () => {
+        //console.log(task.category)
+        if (task.category) { this.selectedCategory = task.category } // all bad... not shure
+        this.dataHandler.searchTasks(
+          this.selectedCategory, NoValue.Yes, FilterStateTask.All, NoValue.Yes).subscribe(tasks => {
+            this.tasks = tasks;
+          });
+      }); */
+  }
+
+  // видалення завдання
+  onDeleteTask(task: Task) {
+    this.dataHandler.deleteTask(task).subscribe(cat => {
+      this.updateTasks()
+    });
+    /* this.dataHandler.deleteTask(task).subscribe(// for easy mind - not good practice
+      () => {
+        //console.log(task.category)
+        if (task.category) { this.selectedCategory = task.category } // all bad... not shure
+        this.dataHandler.searchTasks(
+          this.selectedCategory, NoValue.Yes, FilterStateTask.All, NoValue.Yes).subscribe(tasks => {
+            this.tasks = tasks;
+          });
+      }); */
+  }
+
+  // пошук завдань
+  onSearchTasks(searchString: string) {
+    this.searchTaskText = searchString;
+    this.updateTasks();
+  }
+
+  // фільтрація завдань по статусу (все, вирішені, невирішені)
+  onFilterTasksByStatus(status: FilterStateTask) {
+    console.log(status)
+    this.statusFilter = status;
+    this.updateTasks();
+  }
+
   sendRequest() {
     this.http.get('', { params: {} }).subscribe(result => console.log(result))
   }

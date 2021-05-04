@@ -92,11 +92,14 @@
 
           <div class="col-md-12">
 
-            <app-tasks [tasks]="tasks"
+            <app-tasks 
+            [tasks]="tasks"
             (updateTask)="onUpdateTask($event)"
             (deleteTask)="onDeleteTask($event)"
             (selectCategory)="onSelectCategory($event)"
-            [tasks]="tasks"></app-tasks>
+            [tasks]="tasks"
+            (filterByStatus)="onFilterTasksByStatus($event)"
+            (filterByTitle)="onSearchTasks($event)"></app-tasks>
 
           </div>
         </div>

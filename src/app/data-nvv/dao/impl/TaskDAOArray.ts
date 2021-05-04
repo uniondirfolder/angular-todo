@@ -1,18 +1,47 @@
 import { Observable, of } from "rxjs";
 import { Category } from "src/app/model-nvv/Category";
 import { Priority } from "src/app/model-nvv/Priority";
-import { Task } from "src/app/model-nvv/Task";
-import { TestData } from "../../TestData";
+import { Task } from 'src/app/model-nvv/Task';
+import { TestData } from '../../TestData';
+import { FilterStateTask } from "../enum/FilterStateTasks";
+import { NoValue } from "../enum/NoValue";
 import { TaskDAO } from "../interface/TaskDAO";
 
 export class TaskDAOArray implements TaskDAO {
-    search(category: Category | boolean, searchText: string | boolean, status: boolean | string, priority: Priority | boolean): Observable<Task[]> {
+    search(category: Category | NoValue, searchText: string | NoValue, status: boolean | FilterStateTask, priority: Priority | NoValue): Observable<Task[]> {
+        console.log(category);
+        console.log(searchText);
+        console.log(status);
         return of(this.searchTasks(category, searchText, status, priority));
     }
-    private searchTasks(category: Category | boolean, searchText: string | boolean, status: boolean | string, priority: Priority | boolean): any {
+    private searchTasks(category: Category | NoValue, searchText: string | NoValue, status: boolean | FilterStateTask, priority: Priority | NoValue): Task[] {
         let allTasks = TestData.tasks;
-        if (category != false) {
-            allTasks = allTasks.filter(task => task.category === category);
+        console.log('xxx');
+        if (typeof (status) !== 'string') { // costyl :)
+            allTasks = allTasks.filter(task => task.completed === status);
+        }
+        if (typeof (status) === 'string') {
+            if (status === FilterStateTask.Solved) {
+                allTasks = allTasks.filter(task => task.completed === true);
+            }
+            if (status === FilterStateTask.Unsolved) {
+                allTasks = allTasks.filter(task => task.completed === false);
+            }
+        }
+        if (category !== NoValue.Yes) {
+            if (category.id !== 0) {// якщо ні то повертаємо усі таски - позиція категорія "ВСІ"
+                allTasks = allTasks.filter(task => task.category === category);
+            }
+        }
+        if (priority !== NoValue.Yes) {
+            allTasks = allTasks.filter(task => task.priority === priority);
+        }
+        if (searchText !== NoValue.Yes) {
+            const template = searchText.toUpperCase();
+            allTasks = allTasks.filter(
+                task =>
+                    task.title.toUpperCase().includes(template)
+            );
         }
         return allTasks;
     }

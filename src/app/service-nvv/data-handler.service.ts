@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { FilterStateTask } from '../data-nvv/dao/enum/FilterStateTasks';
+import { NoValue } from '../data-nvv/dao/enum/NoValue';
 import { CategoryDAOArray } from '../data-nvv/dao/impl/CategoryDAOArray';
 import { PriorityDAOArray } from '../data-nvv/dao/impl/PriorityDAOArray';
 import { TaskDAOArray } from '../data-nvv/dao/impl/TAskDAOArray';
@@ -67,7 +69,8 @@ export class DataHandlerService {
     return this.taskDaoArray.delete(task);
   }
   // поиск задач по параметрам
-  searchTasks(category: Category | boolean, searchText: string | boolean, status: boolean | string, priority: Priority | boolean): Observable<Task[]> {
+  searchTasks(category: Category | NoValue, searchText: string | NoValue, status: boolean | FilterStateTask, priority: Priority | NoValue): Observable<Task[]> {
+    
     return this.taskDaoArray.search(category, searchText, status, priority);
   }
   updateCategory(category: Category): Observable<Category> {

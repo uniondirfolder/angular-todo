@@ -1,100 +1,158 @@
-<div class="card">
-  <div class="card-header card-header-warning">
-    <h4 class="card-title">Стан справ</h4>
+<div class="row">
+  <div class="col-md-3 col-sm-12">
+    <!-- пошук завдань -->
+    <mat-form-field>
+      <input #filterInput (keydown.escape)="searchTaskText = ''; onFilterByTitle()" (keyup)="onFilterByTitle()"
+        [(ngModel)]="searchTaskText" matInput placeholder="Пошук в поточній категорії">
+
+      <button (click)="searchTaskText = ''; onFilterByTitle()" *ngIf="filterInput.value.trim().length > 0"
+        aria-label="Clear" class="clear-icon size25 gray" mat-button mat-icon-button matSuffix>
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
   </div>
-  <div class="card-body table-responsive" *ngIf="tasks && tasks.length > 0">
 
-    <table [dataSource]="dataSource" mat-table matSort>
-
-      <!-- колір приорітету -->
-      <ng-container matColumnDef="color">
-        <th *matHeaderCellDef mat-header-cell></th>
-        <td class="col-color" *matCellDef="let task" [style.background-color]="getPriorityColor(task)" mat-cell></td>
-      </ng-container>
-
-      <!-- нумерація -->
-      <ng-container matColumnDef="id">
-        <th *matHeaderCellDef mat-header-cell></th>
-        <td class="col-id" *matCellDef="let index = index;" mat-cell>
-          {{index + 1}}
-        </td>
-      </ng-container>
-
-      <!-- назва справи (click)="onClickTask(task) -->
-      <ng-container matColumnDef="title">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Опис</th>
-        <td class="col-title" *matCellDef="let task" [class.completed]="task.completed" class="col-title pointer"
-          mat-cell (click)="openEditTaskDialog(task)">
-          {{task.title}}
-        </td>
-      </ng-container>
-
-      <!-- дата виконання -->
-      <ng-container matColumnDef="date">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Термін</th>
-        <td class="col-date" *matCellDef="let task"
-          [ngClass]="{'completed': task.completed, 'novalue': task.date == null}" mat-cell>
-          {{task.date | taskDate}}
-        </td>
-      </ng-container>
-
-      <!-- приорітет -->
-      <ng-container matColumnDef="priority">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Приорітет</th>
-        <td class="col-priority" *matCellDef="let task"
-          [ngClass]="{'completed': task.completed, 'novalue': task.priority == null}" mat-cell>
-          {{task.priority ? task.priority.title : "немає"}}
-        </td>
-      </ng-container>
-
-      <!-- категорія -->
-      <ng-container matColumnDef="category">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header>Категорія</th>
-        <td class="col-category" *matCellDef="let task"
-          [ngClass]="{'completed': task.completed, 'novalue': task.category == null, 'link': !task.completed && task.category}"
-          (click)="!task.completed && task.category && onSelectCategory(task.category)" mat-cell>
-          {{task.category ? task.category.title : "немає"}}
-        </td>
-      </ng-container>
-
-      <!-- actions with task -->
-      <ng-container matColumnDef=operations>
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td class="col-operations" mat-cell *matCellDef="let task" [class.completed]="task.completed">
-          <button mat-icon-button (click)="onOpenDeleteDialog(task)" class="delete-icon">
-            <mat-icon aria-hidden="false">delete</mat-icon>
-          </button>
-          <button mat-icon-button (click)="onOpenEditDialog(task)" class="edit-icon">
-            <mat-icon aria-hidden="false">edit</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-
-      <!-- checker -->
-      <ng-container matColumnDef="select">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td class="col-select text-right" mat-cell *matCellDef="let task">
-          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? onToggleStatus(task) : null"
-            [checked]="task.completed">
-          </mat-checkbox>
-        </td>
-      </ng-container>
-      <!--  хедер таблиці-->
-      <tr *matHeaderRowDef="displayedColumns; " mat-header-row></tr>
-
-      <!--  строки таблиці - набір строк з тегів td (порядок вказуеться в зміній displayedColumns) -->
-      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
-
-
-    </table>
-
-    <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons #matPaginator></mat-paginator>
+  <div class="col-md-3 col-sm-12">
+    <!-- фільтр по статусу -->
+    <mat-form-field>
+      <mat-select #statusFilter (valueChange)="onFilterByStatus($event)" [value]="filter"
+        placeholder="Фільтр по статусу">
+        <!-- <mat-option [value]="null">Всі статуси</mat-option> -->
+        <mat-option [value]="true">Виконані завдання</mat-option>
+        <mat-option [value]="false">Невиконані завдання</mat-option>
+      </mat-select>
+      <button (click)="$event.stopPropagation(); onFilterByStatus('All')" *ngIf="selectedStatusFilter != 'All'"
+        aria-label="Clear" class="clear-icon size25 gray" mat-button mat-icon-button matSuffix>
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
   </div>
-  <div *ngIf="tasks && tasks.length == 0">
-    <p class="not-found">Нічого не знайдено</p>
+
+  <div class="col-md-3 col-sm-12">
+
+
+
+  </div>
+
+  <div class="col-md-3 col-sm-12 text-right">
+    <div class="row">
+      <div class="text-left col-6">
+
+        <button (click)="$event.stopPropagation(); onFilterByStatus('All');  searchTaskText = ''; onFilterByTitle()"
+          *ngIf="selectedStatusFilter != 'All' ||  (searchTaskText != '' && searchTaskText.trim() != '') "
+          aria-label="Clear" mat-button matSuffix>
+          Скинути фільтри
+        </button>
+      </div>
+
+      <div class="text-right col-6">
+        <button color="primary" mat-raised-button>Додати</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12 task-list">
+    <!-- список завдань -->
+    <div class="card">
+      <div class="card-header card-header-warning">
+        <h4 class="card-title">Стан справ</h4>
+      </div>
+      <div class="card-body table-responsive" *ngIf="tasks && tasks.length > 0">
+
+        <table [dataSource]="dataSource" mat-table matSort>
+
+          <!-- колір приорітету -->
+          <ng-container matColumnDef="color">
+            <th *matHeaderCellDef mat-header-cell></th>
+            <td class="col-color" *matCellDef="let task" [style.background-color]="getPriorityColor(task)" mat-cell>
+            </td>
+          </ng-container>
+
+          <!-- нумерація -->
+          <ng-container matColumnDef="id">
+            <th *matHeaderCellDef mat-header-cell></th>
+            <td class="col-id" *matCellDef="let index = index;" mat-cell>
+              {{index + 1}}
+            </td>
+          </ng-container>
+
+          <!-- назва справи (click)="onClickTask(task) -->
+          <ng-container matColumnDef="title">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>Опис</th>
+            <td class="col-title" *matCellDef="let task" [class.completed]="task.completed" class="col-title pointer"
+              mat-cell (click)="openEditTaskDialog(task)">
+              {{task.title}}
+            </td>
+          </ng-container>
+
+          <!-- дата виконання -->
+          <ng-container matColumnDef="date">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>Термін</th>
+            <td class="col-date" *matCellDef="let task"
+              [ngClass]="{'completed': task.completed, 'novalue': task.date == null}" mat-cell>
+              {{task.date | taskDate}}
+            </td>
+          </ng-container>
+
+          <!-- приорітет -->
+          <ng-container matColumnDef="priority">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>Приорітет</th>
+            <td class="col-priority" *matCellDef="let task"
+              [ngClass]="{'completed': task.completed, 'novalue': task.priority == null}" mat-cell>
+              {{task.priority ? task.priority.title : "немає"}}
+            </td>
+          </ng-container>
+
+          <!-- категорія -->
+          <ng-container matColumnDef="category">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>Категорія</th>
+            <td class="col-category" *matCellDef="let task"
+              [ngClass]="{'completed': task.completed, 'novalue': task.category == null, 'link': !task.completed && task.category}"
+              (click)="!task.completed && task.category && onSelectCategory(task.category)" mat-cell>
+              {{task.category ? task.category.title : "немає"}}
+            </td>
+          </ng-container>
+
+          <!-- actions with task -->
+          <ng-container matColumnDef=operations>
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td class="col-operations" mat-cell *matCellDef="let task" [class.completed]="task.completed">
+              <button mat-icon-button (click)="onOpenDeleteDialog(task)" class="delete-icon">
+                <mat-icon aria-hidden="false">delete</mat-icon>
+              </button>
+              <button mat-icon-button (click)="onOpenEditDialog(task)" class="edit-icon">
+                <mat-icon aria-hidden="false">edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- checker -->
+          <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td class="col-select text-right" mat-cell *matCellDef="let task">
+              <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? onToggleStatus(task) : null"
+                [checked]="task.completed">
+              </mat-checkbox>
+            </td>
+          </ng-container>
+          <!--  хедер таблиці-->
+          <tr *matHeaderRowDef="displayedColumns; " mat-header-row></tr>
+
+          <!--  строки таблиці - набір строк з тегів td (порядок вказуеться в зміній displayedColumns) -->
+          <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+
+
+        </table>
+
+        <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons #matPaginator>
+        </mat-paginator>
+      </div>
+      <div *ngIf="tasks && tasks.length == 0">
+        <p class="not-found">Нічого не знайдено</p>
+      </div>
+    </div>
   </div>
 </div>
-
 
 <!-- <thead class="text-warning">
       <th>#</th>

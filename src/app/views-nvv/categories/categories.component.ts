@@ -51,7 +51,6 @@ export class CategoriesComponent implements OnInit {
   }
   onShowAllTasksCategories(): void {
     this.selectedCategory.id = 0;
-    this.selectedCategory.title = '';
     this.selectCategory.emit(this.selectedCategory);
   }
   onShowEditIcon(index: number): void {
