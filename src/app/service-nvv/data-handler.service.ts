@@ -4,7 +4,7 @@ import { FilterStateTask } from '../data-nvv/dao/enum/FilterStateTasks';
 import { NoValue } from '../data-nvv/dao/enum/NoValue';
 import { CategoryDAOArray } from '../data-nvv/dao/impl/CategoryDAOArray';
 import { PriorityDAOArray } from '../data-nvv/dao/impl/PriorityDAOArray';
-import { TaskDAOArray } from '../data-nvv/dao/impl/TAskDAOArray';
+import { TaskDAOArray } from '../data-nvv/dao/impl/TaskDAOArray';
 import { TestData } from '../data-nvv/TestData';
 import { Category } from '../model-nvv/Category';
 import { Priority } from '../model-nvv/Priority';
