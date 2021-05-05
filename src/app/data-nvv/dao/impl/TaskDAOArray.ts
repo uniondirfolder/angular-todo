@@ -13,7 +13,7 @@ export class TaskDAOArray implements TaskDAO {
     }
     private searchTasks(category: Category | NoValue, searchText: string | NoValue, status: boolean | FilterStateTask, priority: Priority | NoValue): Task[] {
         let allTasks = TestData.tasks;
-        
+        // застосовуємо по черзі всі вимоги до пошуку і фільтрації
         if (typeof (status) !== 'string') { // costyl :)
             allTasks = allTasks.filter(task => task.completed === status);
         }
@@ -31,7 +31,9 @@ export class TaskDAOArray implements TaskDAO {
             }
         }
         if (priority !== NoValue.Yes) {
-            allTasks = allTasks.filter(task => task.priority === priority);
+            if (priority.id !== 0) {
+                allTasks = allTasks.filter(task => task.priority === priority);
+            }
         }
         if (searchText !== NoValue.Yes) {
             const template = searchText.toUpperCase();

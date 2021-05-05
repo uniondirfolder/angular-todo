@@ -15,14 +15,18 @@ import { DataHandlerService } from './service-nvv/data-handler.service';
 })
 export class AppComponent implements OnInit {
   title = 'angular-todo';
+
   tasks: Task[] = [];
-  categories: Category[] = [];
-  selectedCategory: Category = new Category(0, "");
+  categories: Category[] = []; // all categories
+  priorities: Priority[] = []; // all priorities
+  selectedCategory: Category = new Category(0, '');
 
   // пошук
-  searchTaskText = ''; // поточне значення для пошуку задач
+  searchTaskText = ''; // поточне значення для пошуку завдань
+
   // фільтрація
   statusFilter: FilterStateTask = FilterStateTask.All;
+  priorityFilter: Priority = new Priority(0, '', '');
 
   constructor(
     private dataHandler: DataHandlerService, // фасад для работы с данными
@@ -30,8 +34,11 @@ export class AppComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.dataHandler.getAllTasks().subscribe(tasks => this.tasks = tasks);
+    //this.dataHandler.getAllTasks().subscribe(tasks => this.tasks = tasks);
     this.dataHandler.getAllCategories().subscribe(categories => this.categories = categories);
+    this.dataHandler.getAllPriorities().subscribe(priorities => this.priorities = priorities);
+
+    this.onSelectCategory(NoValue.Yes);
   }
 
   private updateTasks() {
@@ -39,16 +46,16 @@ export class AppComponent implements OnInit {
       this.selectedCategory,
       this.searchTaskText,
       this.statusFilter,
-      NoValue.Yes
+      this.priorityFilter
     ).subscribe((tasks: Task[]) => {
       this.tasks = tasks;
     });
   }
 
   // зміна категорії
-  onSelectCategory(category: Category) {
-    console.log(category.id)
-    this.selectedCategory = category;
+  onSelectCategory(category: Category | NoValue) {
+
+    if (category != NoValue.Yes) { this.selectedCategory = category }
     this.updateTasks();
   }
 
@@ -108,11 +115,17 @@ export class AppComponent implements OnInit {
 
   // фільтрація завдань по статусу (все, вирішені, невирішені)
   onFilterTasksByStatus(status: FilterStateTask) {
-    console.log(status)
+
     this.statusFilter = status;
     this.updateTasks();
   }
 
+  // фільтрація завдань по статусу (все, вирішені, невирішені)
+  onFilterTasksByPriority(priority: Priority){
+    console.log(priority)
+    this.priorityFilter = priority;
+    this.updateTasks();
+  }
   sendRequest() {
     this.http.get('', { params: {} }).subscribe(result => console.log(result))
   }

@@ -16,7 +16,7 @@
     <!-- фільтр по статусу -->
     <mat-form-field>
       <mat-select #statusFilter (valueChange)="onFilterByStatus($event)" [(value)]="filter"
-        placeholder="Фільтр по статусу">
+        placeholder="Фільтр статусу">
         <!-- <mat-option [value]="null">Всі статуси</mat-option> -->
         <mat-option [value]="true">Виконані завдання</mat-option>
         <mat-option [value]="false">Невиконані завдання</mat-option>
@@ -29,9 +29,20 @@
   </div>
 
   <div class="col-md-3 col-sm-12">
+    <!-- фільтр по пріорітету -->
+    <mat-form-field>
+      <mat-select [(value)]="filterViewPriority" (valueChange)="onFilterByPriority($event)"
+        placeholder="Фільтр пріорітету">
+        <!-- <mat-option [value]="null">Всі приорітети</mat-option> -->
+        <mat-option *ngFor="let priority of priorities" [value]="priority">{{priority.title}}</mat-option>
+      </mat-select>
 
-
-
+      <button (click)="$event.stopPropagation(); onFilterByPriority('null')" *ngIf="filterViewPriority!==''" 
+        aria-label="Clear" class="clear-icon size25 gray"
+        mat-icon-button mat-button matSuffix>       
+      <mat-icon>clear</mat-icon>
+    </button>
+    </mat-form-field>
   </div>
 
   <div class="col-md-3 col-sm-12 text-right">

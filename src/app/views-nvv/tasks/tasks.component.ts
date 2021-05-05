@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { FilterStateTask } from 'src/app/data-nvv/dao/enum/FilterStateTasks';
 import { EditTaskDialogComponent } from 'src/app/dialog/edit-task-dialog/edit-task-dialog.component';
 import { Category } from 'src/app/model-nvv/Category';
+import { Priority } from 'src/app/model-nvv/Priority';
 import { Task } from 'src/app/model-nvv/Task';
 import { DataHandlerService } from 'src/app/service-nvv/data-handler.service';
 import { ConfirmDialogComponent } from '../../dialog/confirm-dialog/confirm-dialog.component';
@@ -29,15 +30,20 @@ export class TasksComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false })
   private sort!: MatSort;
 
-  tasks: Task[] = [];
-  // Текущие задачи для отображения на странице
+  tasks: Task[] = []; // Текущие задачи для отображения на странице
+  priorities: Priority[] = []; // список пріоритетів (потрб для фільтрації завдань)
+
   @Input('tasks')
   set setTasks(tasks: Task[]) {// на прямую не присваиваем значение только через инпут
     this.tasks = tasks;
     this.fillTable();
   }
+  @Input('priorities')
+  set setPriorities(priorities: Priority[]) {
+    this.priorities = priorities;
+  }
 
-  @Output() 
+  @Output()
   updateTask = new EventEmitter<Task>();
 
   @Output()
@@ -52,13 +58,19 @@ export class TasksComponent implements OnInit, AfterViewInit {
   @Output()
   filterByStatus = new EventEmitter<FilterStateTask>();
 
+  @Output()
+  filterByPriority = new EventEmitter<Priority>();
+
   // пошук
   searchTaskText: string = ''; // текущее значение для поиска задач
-
   selectedStatusFilter: FilterStateTask = FilterStateTask.All;   // по-умолчанию будут показываться задачи по всем статусам (решенные и нерешенные)
+  private selectedPriorityFilter: Priority = new Priority(0, '', '');
 
   @Input()
   filter: string = '';
+  @Input()
+  filterViewPriority: string = '';
+
   constructor(
     //private dataHandler: DataHandlerService, // доступ к данным
     private dialog: MatDialog, // для открытия нового д/а (из текущего) - подтверждения crud
@@ -235,11 +247,24 @@ export class TasksComponent implements OnInit, AfterViewInit {
       else { this.selectedStatusFilter = FilterStateTask.Unsolved; }
     }
     // на всякий випадок перевіряємо чи змінилося значення (хоча сам UI компонент повинен це робити)
-    if (value !== this.selectedStatusFilter) {
-      // this.selectedStatusFilter = value;
+    // if (value !== this.selectedStatusFilter) {
+    //   // this.selectedStatusFilter = value;
 
-    }
+    // }
     if (this.selectedStatusFilter == FilterStateTask.All) { this.filter = ''; }
     this.filterByStatus.emit(this.selectedStatusFilter);
   }
+  // filtering by priority
+  onFilterByPriority(value: any): void {
+    
+    if(value === this.selectedPriorityFilter) return;
+    else if (value==='null') { this.selectedPriorityFilter = new Priority(0, '', ''); this.filterViewPriority=''; }
+    else {
+      this.selectedPriorityFilter = value;
+    }
+    console.log(this.selectedPriorityFilter)
+    this.filterByPriority.emit(this.selectedPriorityFilter);
+  }
 }
+
+
