@@ -69,9 +69,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
   searchTaskText: string = ''; // текущее значение для поиска задач
   selectedStatusFilter: FilterStateTask = FilterStateTask.All;   // по-умолчанию будут показываться задачи по всем статусам (решенные и нерешенные)
   private selectedPriorityFilter: Priority = new Priority(0, '', '');
-  
+
   @Input()
-  selectedCategory: Category = new Category(0,'');
+  selectedCategory: Category = new Category(0, '');
 
   @Input()
   filter: string = '';
@@ -90,7 +90,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
     // this.dataHandler.getAllTasks().subscribe(tasks => this.tasks = tasks);
 
     this.dataSource = new MatTableDataSource();
-    this.fillTable(); // заполняем таблицы данными (задачи) и всеми метаданными
+    //this.fillTable(); // заполняем таблицы данными (задачи) и всеми метаданными
+    this.onSelectCategory(new Category(0, ''));
   }
 
   ngAfterViewInit(): void { // взагалом усе проініціалізовано, тому можемо робити операції зі зміними (or undefined)
@@ -183,17 +184,17 @@ export class TasksComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   // диалоговое окно для добавления задачи
-  openAddTaskDialog(){
-     // то же самое, что и при редактировании, но только передаем пустой объект Task
-     const task = new Task(0, '', false, undefined, this.selectedCategory);
-     const dialogRef = this.dialog.open(EditTaskDialogComponent, {data: [task, 'Нове завдання', OperType.ADD]});
-     dialogRef.afterClosed().subscribe(result => {
-         if (result) { // если нажали ОК и есть результат
-             this.addTask.emit(task);
-         }
-     });
+  openAddTaskDialog() {
+    // то же самое, что и при редактировании, но только передаем пустой объект Task
+    const task = new Task(0, '', false, undefined, this.selectedCategory);
+    const dialogRef = this.dialog.open(EditTaskDialogComponent, { data: [task, 'Нове завдання', OperType.ADD] });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) { // если нажали ОК и есть результат
+        this.addTask.emit(task);
+      }
+    });
   }
 
   // диалоговое окно подтверждения удаления
@@ -275,9 +276,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
   // filtering by priority
   onFilterByPriority(value: any): void {
-    
-    if(value === this.selectedPriorityFilter) return;
-    else if (value==='null') { this.selectedPriorityFilter = new Priority(0, '', ''); this.filterViewPriority=''; }
+
+    if (value === this.selectedPriorityFilter) return;
+    else if (value === 'null') { this.selectedPriorityFilter = new Priority(0, '', ''); this.filterViewPriority = ''; }
     else {
       this.selectedPriorityFilter = value;
     }

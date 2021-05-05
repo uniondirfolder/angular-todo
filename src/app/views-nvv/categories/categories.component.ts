@@ -106,5 +106,12 @@ export class CategoriesComponent implements OnInit {
       }
     });
   }
-  
+
+  // пошук категорії
+  search(): void {
+    // if (this.searchCategoryTitle === '') {
+    //   return;
+    // }
+    this.searchCategory.emit(this.searchCategoryTitle);
+  }
 }

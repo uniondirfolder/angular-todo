@@ -23,6 +23,7 @@ export class AppComponent implements OnInit {
 
   // пошук
   searchTaskText = ''; // поточне значення для пошуку завдань
+  searchCategoryText = ''; // поточне значення для пошуку категорій
 
   // фільтрація
   statusFilter: FilterStateTask = FilterStateTask.All;
@@ -65,13 +66,15 @@ export class AppComponent implements OnInit {
       this.selectedCategory.id = 0; // відкриваємо категорію "Все"
       this.selectedCategory.title = '';
       this.onSelectCategory(this.selectedCategory);
+      //this.onSearchCategory(this.searchCategoryText);
     });
   }
 
   // оновлення категорії
   onUpdateCategory(category: Category) {
     this.dataHandler.updateCategory(category).subscribe(() => {
-      this.onSelectCategory(this.selectedCategory);
+      //this.onSelectCategory(this.selectedCategory);
+      this.onSearchCategory(this.searchCategoryText);
     });
   }
 
@@ -87,9 +90,19 @@ export class AppComponent implements OnInit {
   }
 
   private updateCategories() {
-      this.dataHandler.getAllCategories().subscribe(cat => this.categories = cat);
+    this.dataHandler.getAllCategories().subscribe(cat => this.categories = cat);
   }
 
+  // search category
+  onSearchCategory(title: string): void {
+
+    this.searchCategoryText = title;
+
+    this.dataHandler.searchCategories(title).subscribe(categories => {
+      this.categories = categories;
+      
+    });
+  }
   // оновлення завдання
   onUpdateTask(task: Task) {
     this.dataHandler.updateTask(task).subscribe(cat => {
