@@ -68,7 +68,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   // пошук
   searchTaskText: string = ''; // текущее значение для поиска задач
   selectedStatusFilter: FilterStateTask = FilterStateTask.All;   // по-умолчанию будут показываться задачи по всем статусам (решенные и нерешенные)
-  private selectedPriorityFilter: Priority = new Priority(0, '', '');
+  selectedPriorityFilter: Priority = new Priority(0, '', '');
 
   @Input()
   selectedCategory: Category = new Category(0, '');
@@ -79,7 +79,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   filterViewPriority: string = '';
 
   constructor(
-    //private dataHandler: DataHandlerService, // доступ к данным
+    // private dataHandler: DataHandlerService, // доступ к данным
     private dialog: MatDialog, // для открытия нового д/а (из текущего) - подтверждения crud
   ) {
   }

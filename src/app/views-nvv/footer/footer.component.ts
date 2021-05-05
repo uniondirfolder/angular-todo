@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { AboutDialogComponent } from 'src/app/dialog/about-dialog/about-dialog.component';
 @Component({
   selector: 'app-footer',
@@ -8,19 +8,17 @@ import { AboutDialogComponent } from 'src/app/dialog/about-dialog/about-dialog.c
 })
 export class FooterComponent implements OnInit {
 
-    private year: Date= new Date();
-    private site = 'https://nvv.org';
-    private blog = 'https://nvv.org/blog/tag/angular/';
-    private siteName = 'NVV Angular';
-  constructor(private dialog: MatDialog) { 
-    
-  }
+    year: Date = new Date();
+    site = 'https://nvv.org';
+    blog = 'https://nvv.org/blog/tag/angular/';
+    siteName = 'NVV Angular';
+  constructor(private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.year = new Date();
   }
 
-  openAboutDialog() {
+  openAboutDialog(): void {
     this.dialog.open(AboutDialogComponent,
         {
             autoFocus: false,
