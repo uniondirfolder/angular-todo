@@ -63,7 +63,13 @@ export class TaskDAOArray implements TaskDAO {
     }
 
     add(arg: Task): Observable<Task> {
-        throw new Error("Method not implemented.");
+        // if id empty - generete
+        if (arg.id === 0) { arg.id = this.getLastIdTask(); }
+        TestData.tasks.push(arg);
+        return of(arg);
+    }
+    private getLastIdTask(): number { // for test array
+        return Math.max.apply(Math, TestData.tasks.map(task => task.id)) + 1;
     }
 
     get(id: number): Observable<Task | undefined> {
@@ -72,13 +78,13 @@ export class TaskDAOArray implements TaskDAO {
 
     delete(arg: Task): Observable<Task> {
         const taskTmp = TestData.tasks.find(t => t.id === arg.id);
-        if (taskTmp != undefined) TestData.tasks.splice(TestData.tasks.indexOf(taskTmp), 1);
+        if (taskTmp !== undefined) TestData.tasks.splice(TestData.tasks.indexOf(taskTmp), 1);
         return of(arg);
     }
 
     update(arg: Task): Observable<Task> {
         const taskTmp = TestData.tasks.find(t => t.id === arg.id);
-        if (taskTmp != undefined) TestData.tasks.splice(TestData.tasks.indexOf(taskTmp), 1, arg);
+        if (taskTmp !== undefined) TestData.tasks.splice(TestData.tasks.indexOf(taskTmp), 1, arg);
         return of(arg);
     }
 

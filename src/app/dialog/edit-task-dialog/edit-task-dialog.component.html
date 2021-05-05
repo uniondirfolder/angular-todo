@@ -5,7 +5,7 @@
     <!-- название задачи -->
     <mat-form-field>
         <mat-label>Назва (обов*язково)</mat-label>
-        <input #inputTitle matInput [(ngModel)]="tmpTitle" (keydown.enter)="onConfirm()">
+        <input #inputTitle matInput [(ngModel)]="tmpTitle" (keydown.enter)="onConfirm()" autoComplete='off'>
         <button *ngIf="tmpTitle.trim().length > 0" mat-button matSuffix mat-icon-button aria-lable="Clear"
             (click)="tmpTitle=''" class="size25">
             <mat-icon>clear</mat-icon>

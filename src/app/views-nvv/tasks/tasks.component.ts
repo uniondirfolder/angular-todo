@@ -61,10 +61,16 @@ export class TasksComponent implements OnInit, AfterViewInit {
   @Output()
   filterByPriority = new EventEmitter<Priority>();
 
+  @Output()
+  addTask = new EventEmitter<Task>();
+
   // пошук
   searchTaskText: string = ''; // текущее значение для поиска задач
   selectedStatusFilter: FilterStateTask = FilterStateTask.All;   // по-умолчанию будут показываться задачи по всем статусам (решенные и нерешенные)
   private selectedPriorityFilter: Priority = new Priority(0, '', '');
+  
+  @Input()
+  selectedCategory: Category = new Category(0,'');
 
   @Input()
   filter: string = '';
@@ -176,8 +182,20 @@ export class TasksComponent implements OnInit, AfterViewInit {
       }
     });
   }
+  
+  // диалоговое окно для добавления задачи
+  openAddTaskDialog(){
+     // то же самое, что и при редактировании, но только передаем пустой объект Task
+     const task = new Task(0, '', false, undefined, this.selectedCategory);
+     const dialogRef = this.dialog.open(EditTaskDialogComponent, {data: [task, 'Нове завдання']});
+     dialogRef.afterClosed().subscribe(result => {
+         if (result) { // если нажали ОК и есть результат
+             this.addTask.emit(task);
+         }
+     });
+  }
+
   // диалоговое окно подтверждения удаления
-  // tslint:disable-next-line:typedef
   onOpenDeleteDialog(task: Task) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent,
       {

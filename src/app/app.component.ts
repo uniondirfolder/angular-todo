@@ -75,6 +75,12 @@ export class AppComponent implements OnInit {
     });
   }
 
+  // new task
+  onAddTask(task: Task){
+    this.dataHandler.addTask(task).subscribe(result =>{
+      this.updateTasks();
+    });
+  }
   // оновлення завдання
   onUpdateTask(task: Task) {
     this.dataHandler.updateTask(task).subscribe(cat => {
