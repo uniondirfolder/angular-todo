@@ -32,6 +32,11 @@ import { registerLocaleData } from '@angular/common';
 import localeUk from '@angular/common/locales/uk';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { EditCategoryDialogComponent } from './dialog/edit-category-dialog/edit-category-dialog.component';
+import { FooterComponent } from './views-nvv/footer/footer.component';
+import { AboutComponent } from './dialog/about/about.component';
+import { AboutDialogComponent } from './dialog/about-dialog/about-dialog.component';
+import { HeaderComponent } from './views-nvv/header/header.component';
+import { StatComponent } from './views-nvv/stat/stat.component';
 
 registerLocaleData(localeUk); 
 
@@ -44,6 +49,10 @@ registerLocaleData(localeUk);
     ConfirmDialogComponent,
     TaskDatePipe,
     EditCategoryDialogComponent,
+    FooterComponent,
+    AboutDialogComponent,
+    HeaderComponent,
+    StatComponent,
     // TodoItemComponent,
     // TodoListItemComponent,
     // TaskComponent,
@@ -73,7 +82,8 @@ registerLocaleData(localeUk);
   entryComponents: [
     EditTaskDialogComponent,
     ConfirmDialogComponent,
-    EditCategoryDialogComponent
+    EditCategoryDialogComponent,
+    AboutDialogComponent,
   ],
   bootstrap: [AppComponent]
 })
