@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { OperType } from 'src/app/data-nvv/dao/enum/OperType';
 import { EditCategoryDialogComponent } from 'src/app/dialog/edit-category-dialog/edit-category-dialog.component';
 import { Category } from 'src/app/model-nvv/Category';
 import { DataHandlerService } from 'src/app/service-nvv/data-handler.service';
@@ -14,40 +15,52 @@ export class CategoriesComponent implements OnInit {
   @Input()
   categories: Category[] = [];
 
-  @Output()
-  selectCategory = new EventEmitter<Category>();
-
-  @Output()
-  deleteCategory = new EventEmitter<Category>();
-
-  @Output()
-  updateCategory = new EventEmitter<Category>();
-
   @Input()
   selectedCategory: Category = new Category(0, "");
 
-  indexMouseMove: number = 0;
+  // обрали категорію з списку
+  @Output()
+  selectCategory = new EventEmitter<Category>();
+
+  // видалили категорію
+  @Output()
+  deleteCategory = new EventEmitter<Category>();
+
+  // змінили категорію
+  @Output()
+  updateCategory = new EventEmitter<Category>();
+
+  // додали категорію
+  @Output()
+  addCategory = new EventEmitter<string>(); // передаємо тільки назву нової категорії
+
+  // пошук категорії
+  @Output()
+  searchCategory = new EventEmitter<string>(); // передаємо строку для пошуку
+
+  indexMouseMove: number = 0; // для відображення іконки редагування при наведенні на категорію
+  searchCategoryTitle: string = ''; // поточне значення для пошуку категорій
 
   constructor(
-    private dataHandler: DataHandlerService,
-    private dialog: MatDialog, // внедряем MatDialog, чтобы работать с диалоговыми окнами
+    //private dataHandler: DataHandlerService,
+    private dialog: MatDialog, // впроваджуємо MatDialog, щоб працювати з діалоговими вікнами
   ) { }
 
   ngOnInit(): void {
     // this.categories = this.dataHandler.getCategories();
     // this.dataHandler.categoriesSubject.subscribe(catigories => this.categories = catigories);
-    // this.dataHandler.getAllCategories().subscribe(catigories => this.categories = catigories); инициатором получения данных стал app.component
+    // this.dataHandler.getAllCategories().subscribe(catigories => this.categories = catigories); ініціатором отримання даних став app.component
   }
 
   onShowTasksByCategory(category: Category): void {
     //this.dataHandler.getTasksByCategory(category);
     // this.dataHandler.fillTasksByCategory(category);
 
-    if (this.selectedCategory === category) { return; } // лишний раз не делать запрос данных
+    if (this.selectedCategory === category) { return; } // зайвий раз не робити запит даних
 
-    this.selectedCategory = category; // сохраняем выбраную категорию
+    this.selectedCategory = category; // зберігаємо обрану категорію
 
-    this.selectCategory.emit(this.selectedCategory); // вызываем внешний обработчик и передаем туда выбраную категорию
+    this.selectCategory.emit(this.selectedCategory); // викликаємо зовнішній обробник і передаємо туди обрану категорію
   }
   onShowAllTasksCategories(): void {
     this.selectedCategory.id = 0;
@@ -56,28 +69,42 @@ export class CategoriesComponent implements OnInit {
   onShowEditIcon(index: number): void {
     this.indexMouseMove = index;
   }
+
+  // діалогове вікно для редагування категорії
   onOpenEditDialog(category: Category): void {
     const dialogRef = this.dialog.open(EditCategoryDialogComponent, {
-      data: [category.title, 'Редагування категорії'],
+      data: [category.title, 'Редагування категорії', OperType.EDIT],
       width: '400px'
     });
 
     dialogRef.afterClosed().subscribe(result => {
 
-      if (result === 'delete') { // нажали удалить
-
-        this.deleteCategory.emit(category); // вызываем внешний обработчик
-
+      if (result === 'delete') { // натиснули видалити
+        this.deleteCategory.emit(category); // викликаємо зовнішній обробник
         return;
       }
 
-      if (result as string) { // нажали сохранить
+      if (result as string) { // натиснули зберегти
         category.title = result as string;
-
-        this.updateCategory.emit(category); // вызываем внешний обработчик
+        this.updateCategory.emit(category); // викликаємо зовнішній обробник
         return;
       }
     });
   }
 
+  // діалогове вікно для додавання категорії
+  openAddDialog(): void {
+
+    const dialogRef = this.dialog.open(EditCategoryDialogComponent, {
+      data: ['', 'Нова категорія', OperType.ADD],
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.addCategory.emit(result as string); // викликаємо зовнішній обробник
+      }
+    });
+  }
+  
 }

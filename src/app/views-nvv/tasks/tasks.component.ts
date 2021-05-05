@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { FilterStateTask } from 'src/app/data-nvv/dao/enum/FilterStateTasks';
+import { OperType } from 'src/app/data-nvv/dao/enum/OperType';
 import { EditTaskDialogComponent } from 'src/app/dialog/edit-task-dialog/edit-task-dialog.component';
 import { Category } from 'src/app/model-nvv/Category';
 import { Priority } from 'src/app/model-nvv/Priority';
@@ -155,7 +156,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   // диалоговое окно редактирования - для добавления задачи
   openEditTaskDialog(task: Task): void {
     // открытие диалогового окна
-    const dialogRef = this.dialog.open(EditTaskDialogComponent, { data: [task, 'Редагування завдання'], autoFocus: false });
+    const dialogRef = this.dialog.open(EditTaskDialogComponent, { data: [task, 'Редагування завдання', OperType.EDIT], autoFocus: false });
 
     dialogRef.afterClosed().subscribe(result => {
       //  обработка результатов
@@ -187,7 +188,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   openAddTaskDialog(){
      // то же самое, что и при редактировании, но только передаем пустой объект Task
      const task = new Task(0, '', false, undefined, this.selectedCategory);
-     const dialogRef = this.dialog.open(EditTaskDialogComponent, {data: [task, 'Нове завдання']});
+     const dialogRef = this.dialog.open(EditTaskDialogComponent, {data: [task, 'Нове завдання', OperType.ADD]});
      dialogRef.afterClosed().subscribe(result => {
          if (result) { // если нажали ОК и есть результат
              this.addTask.emit(task);
@@ -255,7 +256,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.filterByTitle.emit(this.searchTaskText);
   }
 
-  // фільтрація по статусу
+  // фільтрація за статусом
   onFilterByStatus(value: any): void {
 
     if (typeof (value) === 'string') { this.selectedStatusFilter = FilterStateTask.All; }

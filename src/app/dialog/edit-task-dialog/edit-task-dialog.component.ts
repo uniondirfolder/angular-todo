@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { OperType } from 'src/app/data-nvv/dao/enum/OperType';
 import { Category } from 'src/app/model-nvv/Category';
 import { Priority } from 'src/app/model-nvv/Priority';
 import { Task } from 'src/app/model-nvv/Task';
@@ -17,6 +18,8 @@ export class EditTaskDialogComponent implements OnInit {
 
   dialogTitle = ''; // заголовок окна
   task: Task = new Task(0, '', false); // задача для редактирования/создания
+  operType: OperType = OperType.EMPTY; // тип операции
+
   categories: Category[] = [];
   priorities: Priority[] = [];
 
@@ -27,7 +30,7 @@ export class EditTaskDialogComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<EditTaskDialogComponent>, // для взаимодействии с текущим д/а
-    @Inject(MAT_DIALOG_DATA) private data: [Task, string], // данные: которые передали в д/а
+    @Inject(MAT_DIALOG_DATA) private data: [Task, string, OperType], // данные: которые передали в д/а
     private dataHandler: DataHandlerService, // ссылка на сервис для работы с данными
     private dialog: MatDialog, // для открытия нового д/а (из текущего) - подтверждения crud
   ) { }
@@ -35,6 +38,7 @@ export class EditTaskDialogComponent implements OnInit {
   ngOnInit(): void {
     this.dialogTitle = this.data[1];
     this.task = this.data[0];
+    this.operType = this.data[2];
 
     this.tmpTitle = this.task.title;
     if (this.task.category !== undefined) { this.tmpCategory = this.task.category; }
@@ -77,5 +81,12 @@ export class EditTaskDialogComponent implements OnInit {
   }
   onActivate(): void {
     this.dialogRef.close('activate');
+  }
+  // используем для показать/скрыть кнопка удаления
+  canDelete(): boolean {
+    return this.operType === OperType.EDIT;
+  }
+  canActivateDesactivate(): boolean {
+    return this.canDelete();
   }
 }

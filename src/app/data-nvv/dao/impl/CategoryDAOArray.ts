@@ -8,7 +8,13 @@ export class CategoryDAOArray implements CategoryDAO {
         throw new Error("Method not implemented.");
     }
     add(arg: Category): Observable<Category> {
-        throw new Error("Method not implemented.");
+        if (arg.id === 0) { arg.id = this.getLastIdCategory(); }
+
+        TestData.categories.push(arg);
+        return of(arg);
+    }
+    private getLastIdCategory(): number { // for test array
+        return Math.max.apply(Math, TestData.tasks.map(task => task.id)) + 1;
     }
     get(id: number): Observable<Category> {
         throw new Error("Method not implemented.");

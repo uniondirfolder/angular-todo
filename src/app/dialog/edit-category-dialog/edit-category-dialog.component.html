@@ -7,7 +7,7 @@
 
     <mat-form-field>
         <mat-label>Назва (15 символів)</mat-label>
-        <input #inputTitle (keydown.enter)="onConfirm()" [(ngModel)]="categoryTitle" matInput maxlength="15" />
+        <input #inputTitle (keydown.enter)="onConfirm()" [(ngModel)]="categoryTitle" matInput maxlength="15" autoComplete='off' />
 
         <button (click)="categoryTitle= ''" *ngIf="categoryTitle.trim().length > 0" aria-label="Clear"
             class="clear-icon size25" mat-button mat-icon-button matSuffix>
@@ -30,7 +30,7 @@
 
 
     <div class="col-12 text-center">
-        <button (click)="onDelete()" class="red" mat-button>
+        <button *ngIf="canDelete()" (click)="onDelete()" class="red" mat-button>
             Вилучити
         </button>
     </div>

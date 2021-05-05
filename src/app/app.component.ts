@@ -76,11 +76,20 @@ export class AppComponent implements OnInit {
   }
 
   // new task
-  onAddTask(task: Task){
-    this.dataHandler.addTask(task).subscribe(result =>{
+  onAddTask(task: Task) {
+    this.dataHandler.addTask(task).subscribe(result => {
       this.updateTasks();
     });
   }
+  // new category
+  onAddCategory(title: string): void {
+    this.dataHandler.addCategory(new Category(0, title)).subscribe(() => this.updateCategories());
+  }
+
+  private updateCategories() {
+      this.dataHandler.getAllCategories().subscribe(cat => this.categories = cat);
+  }
+
   // оновлення завдання
   onUpdateTask(task: Task) {
     this.dataHandler.updateTask(task).subscribe(cat => {
@@ -127,7 +136,7 @@ export class AppComponent implements OnInit {
   }
 
   // фільтрація завдань по статусу (все, вирішені, невирішені)
-  onFilterTasksByPriority(priority: Priority){
+  onFilterTasksByPriority(priority: Priority) {
     console.log(priority)
     this.priorityFilter = priority;
     this.updateTasks();
