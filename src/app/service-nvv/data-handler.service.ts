@@ -59,9 +59,6 @@ export class DataHandlerService {
   getAllCategories(): Observable<Category[]> {
     return this.categoryDaoArray.getAll();
   }
-  getAllPriorities(): Observable<Priority[]> {
-    return this.priorityDaoArray.getAll();
-  }
   updateTask(task: Task): Observable<Task> {
     return this.taskDaoArray.update(task);
   }
@@ -99,7 +96,7 @@ export class DataHandlerService {
   }
 
   getUncompletedTotalCount(): Observable<number> {
-    return this.taskDaoArray.getUncompletedCountInCategory(new Category(0,''));
+    return this.taskDaoArray.getUncompletedCountInCategory(new Category(0, ''));
   }
 
   getUncompletedCountInCategory(category: Category): Observable<number> {
@@ -112,5 +109,23 @@ export class DataHandlerService {
 
   getTotalCount(): Observable<number> {
     return this.taskDaoArray.getTotalCount();
+  }
+
+  // приоритеты
+
+  getAllPriorities(): Observable<Priority[]> {
+    return this.priorityDaoArray.getAll();
+  }
+
+  addPriority(priority: Priority): Observable<Priority> {
+    return this.priorityDaoArray.add(priority);
+  }
+
+  deletePriority(priority: Priority): Observable<Priority> {
+    return this.priorityDaoArray.delete(priority);
+  }
+
+  updatePriority(priority: Priority): Observable<Priority> {
+    return this.priorityDaoArray.update(priority);
   }
 }

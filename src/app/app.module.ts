@@ -38,6 +38,11 @@ import { AboutDialogComponent } from './dialog/about-dialog/about-dialog.compone
 import { HeaderComponent } from './views-nvv/header/header.component';
 import { StatComponent } from './views-nvv/stat/stat.component';
 import { StatCardComponent } from './views-nvv/stat/stat-card/stat-card.component';
+import { ColorPickerModule } from 'ngx-color-picker';
+import { PrioritiesComponent } from './views-nvv/priorities/priorities.component';
+import { EditPriorityDialogComponent } from './dialog/edit-priority-dialog/edit-priority-dialog.component';
+import { SettingsDialogComponent } from './dialog/settings-dialog/settings-dialog.component';
+
 
 registerLocaleData(localeUk);
 
@@ -55,9 +60,10 @@ registerLocaleData(localeUk);
     HeaderComponent,
     StatComponent,
     StatCardComponent,
-    // TodoItemComponent,
-    // TodoListItemComponent,
-    // TaskComponent,
+    PrioritiesComponent,
+    EditCategoryDialogComponent,
+    SettingsDialogComponent,
+    EditPriorityDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -76,7 +82,7 @@ registerLocaleData(localeUk);
     MatDatepickerModule,
     MatNativeDateModule,
     MatCheckboxModule,
-    // MaterialModule,
+    ColorPickerModule,
     AppRoutingModule,
     HttpClientModule
   ],
@@ -86,6 +92,9 @@ registerLocaleData(localeUk);
     ConfirmDialogComponent,
     EditCategoryDialogComponent,
     AboutDialogComponent,
+    SettingsDialogComponent,
+    EditPriorityDialogComponent
+    
   ],
   bootstrap: [AppComponent]
 })

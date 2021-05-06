@@ -1,0 +1,18 @@
+<mat-dialog-content>
+
+    <p class="settings-title with-subtitle" mat-dialog-title>Налаштування приорітетів</p>
+    <p class="little subtitle">* Якщо здійснюється зміна - колір одночасно зміниться і в таблиці</p>
+
+    <app-priorities (addPriority)="onAddPriority($event)" (deletePriority)="onDeletePriority($event)"
+        (updatePriority)="onUpdatePriority($event)" [priorities]="prioritiesSet">
+
+    </app-priorities>
+
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+
+    <button (click)="onClose()" color="primary" mat-raised-button>Закрити</button>
+
+</mat-dialog-actions>
