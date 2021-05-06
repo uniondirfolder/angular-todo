@@ -1,1 +1,27 @@
-<p>stat works!</p>
+<div *ngIf="showStat">
+    <div class="row">
+
+
+        <app-stat-card [completed]="true" [countTmp]="completeTasksInCategory" [countTotal]="totalTasksInCategory"
+            class='col-lg-3 col-md-6 col-sm-6' iconName="done" title="Завдання які завершені">
+        </app-stat-card>
+
+        <app-stat-card [countTmp]="uncompleteTasksInCategory" [countTotal]="totalTasksInCategory"
+            class='col-lg-3 col-md-6 col-sm-6' iconName="thumb_down_alt" title="Завдання які не завершені">
+        </app-stat-card>
+
+
+        <app-stat-card [completed]="true"
+            [countTmp]="completeTasksInCategory ? (completeTasksInCategory/totalTasksInCategory | percent) : '0 %'"
+            class='col-lg-3 col-md-6 col-sm-6 completed-card' iconName="poll" title="Процент завершених завдань">
+        </app-stat-card>
+
+
+        <app-stat-card
+            [countTmp]="uncompleteTasksInCategory ? (uncompleteTasksInCategory/totalTasksInCategory | percent) : '0 %'"
+            class='col-lg-3 col-md-6 col-sm-6' iconName="thumb_down_alt" title="Процент не завершених завдань">
+        </app-stat-card>
+
+
+    </div>
+</div>

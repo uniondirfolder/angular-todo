@@ -73,7 +73,7 @@ export class DataHandlerService {
   }
   // поиск задач по параметрам
   searchTasks(category: Category | NoValue, searchText: string | NoValue, status: boolean | FilterStateTask, priority: Priority | NoValue): Observable<Task[]> {
-    
+
     return this.taskDaoArray.search(category, searchText, status, priority);
   }
   updateCategory(category: Category): Observable<Category> {
@@ -90,5 +90,27 @@ export class DataHandlerService {
 
   searchCategories(title: string): Observable<Category[]> {
     return this.categoryDaoArray.search(title);
-}
+  }
+
+  // stat
+
+  getCompletedCountInCategory(category: Category): Observable<number> {
+    return this.taskDaoArray.getCompletedCountInCategory(category);
+  }
+
+  getUncompletedTotalCount(): Observable<number> {
+    return this.taskDaoArray.getUncompletedCountInCategory(new Category(0,''));
+  }
+
+  getUncompletedCountInCategory(category: Category): Observable<number> {
+    return this.taskDaoArray.getUncompletedCountInCategory(category);
+  }
+
+  getTotalCountInCategory(category: Category): Observable<number> {
+    return this.taskDaoArray.getTotalCountInCategory(category);
+  }
+
+  getTotalCount(): Observable<number> {
+    return this.taskDaoArray.getTotalCount();
+  }
 }

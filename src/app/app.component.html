@@ -21,22 +21,17 @@
     <div class="content">
       <div class="container-fluid">
 
-        <app-stat></app-stat>
+        <app-stat [completeTasksInCategory]="completedCountInCategory" [showStat]="showStat"
+          [totalTasksInCategory]="totalTasksCountInCategory" [uncompleteTasksInCategory]="uncompletedCountInCategory">
+        </app-stat>
 
         <div class="row">
           <div class="col-md-12">
 
-            <app-tasks 
-            [tasks]="tasks" [priorities]="priorities"
-             
-              (updateTask)="onUpdateTask($event)"
-              (deleteTask)="onDeleteTask($event)"
-              (selectCategory)="onSelectCategory($event)"
-              (addTask)="onAddTask($event)"
-              
-              (filterByTitle)="onSearchTasks($event)" 
-              (filterByStatus)="onFilterTasksByStatus($event)"
-              (filterByPriority)="onFilterTasksByPriority($event)">
+            <app-tasks [tasks]="tasks" [priorities]="priorities" (updateTask)="onUpdateTask($event)"
+              (deleteTask)="onDeleteTask($event)" (selectCategory)="onSelectCategory($event)"
+              (addTask)="onAddTask($event)" (filterByTitle)="onSearchTasks($event)"
+              (filterByStatus)="onFilterTasksByStatus($event)" (filterByPriority)="onFilterTasksByPriority($event)">
             </app-tasks>
 
           </div>

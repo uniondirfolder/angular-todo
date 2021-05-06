@@ -7,11 +7,15 @@ import { FilterStateTask } from "../enum/FilterStateTasks";
 import { NoValue } from "../enum/NoValue";
 import { TaskDAO } from "../interface/TaskDAO";
 
+// реализация работы с задачами в виде массивов
+// все методы DAO возвращают тип Observable, для реактивных возможностей
+// для работы с БД - нужно изменить реализацию каждого метода, чтобы обращался не к массивам, а делал RESTful запрос или напрямую к БД
 export class TaskDAOArray implements TaskDAO {
     search(category: Category | NoValue, searchText: string | NoValue, status: boolean | FilterStateTask, priority: Priority | NoValue): Observable<Task[]> {
         return of(this.searchTasks(category, searchText, status, priority));
     }
-    private searchTasks(category: Category | NoValue, searchText: string | NoValue, status: boolean | FilterStateTask, priority: Priority | NoValue): Task[] {
+
+    private searchTasks(category: Category | NoValue, searchText: string | NoValue, status: boolean | FilterStateTask | NoValue.Yes, priority: Priority | NoValue): Task[] {
         let allTasks = TestData.tasks;
         // застосовуємо по черзі всі вимоги до пошуку і фільтрації
         if (typeof (status) !== 'string') { // costyl :)
@@ -44,24 +48,28 @@ export class TaskDAOArray implements TaskDAO {
         }
         return allTasks;
     }
-
-
+    // -----------------------------------------------------------------------------
+    // кол-во завершенных задач в заданной категории (если category === id=0, то для всех категорий)
     getCompletedCountInCategory(category: Category): Observable<number> {
-        throw new Error("Method not implemented.");
+        return of(this.searchTasks(this.categoryIsNull(category), NoValue.Yes, true, NoValue.Yes).length)
     }
-
+    // кол-во не завершенных задач в заданной категории 
     getUncompletedCountInCategory(category: Category): Observable<number> {
-        throw new Error("Method not implemented.");
+        return of(this.searchTasks(this.categoryIsNull(category), NoValue.Yes, false, NoValue.Yes).length)
     }
 
     getTotalCountInCategory(category: Category): Observable<number> {
-        throw new Error("Method not implemented.");
+        return of(this.searchTasks(this.categoryIsNull(category), NoValue.Yes, NoValue.Yes, NoValue.Yes).length)
     }
 
     getTotalCount(): Observable<number> {
-        throw new Error("Method not implemented.");
+        return of(TestData.tasks.length);
     }
-
+    private categoryIsNull(category: Category): Category | NoValue {
+        if (category.id === 0) { return NoValue.Yes }
+        return category;
+    }
+    // -----------------------------------------------------------------------------
     add(arg: Task): Observable<Task> {
         // if id empty - generete
         if (arg.id === 0) { arg.id = this.getLastIdTask(); }

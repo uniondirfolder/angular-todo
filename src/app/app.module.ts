@@ -37,6 +37,7 @@ import { FooterComponent } from './views-nvv/footer/footer.component';
 import { AboutDialogComponent } from './dialog/about-dialog/about-dialog.component';
 import { HeaderComponent } from './views-nvv/header/header.component';
 import { StatComponent } from './views-nvv/stat/stat.component';
+import { StatCardComponent } from './views-nvv/stat/stat-card/stat-card.component';
 
 registerLocaleData(localeUk);
 
@@ -53,6 +54,7 @@ registerLocaleData(localeUk);
     AboutDialogComponent,
     HeaderComponent,
     StatComponent,
+    StatCardComponent,
     // TodoItemComponent,
     // TodoListItemComponent,
     // TaskComponent,
