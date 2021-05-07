@@ -1,4 +1,4 @@
-<div class="sidebar" data-color="purple" data-background-color="white">
+
 
   <div id="categories">
     <div class="logo">
@@ -12,7 +12,7 @@
       </span>
     </div>
 
-    <div class="sidebar-wrapper">
+    <div class="sidebar-wrapper ">
       <ul class="nav">
 
         <!--  пошук категорій -->
@@ -51,7 +51,7 @@
           <a class="nav-link">
             <span class="category-title">{{mapValue.key.title}}</span>
             <span class="edit-category-icon-aria">
-              <mat-icon (click)="$event.stopPropagation(); onOpenEditDialog(mapValue.key)" *ngIf="indexMouseMove === index"
+              <mat-icon *ngIf="indexMouseMove === index || isMobile || isTablet" (click)="$event.stopPropagation(); onOpenEditDialog(mapValue.key)"
                 class="edit-category-icon">edit</mat-icon>
             </span>
             <span class="uncompleted-count">{{mapValue.value}}</span>
@@ -64,4 +64,3 @@
     <div class="sidebar-background"></div>
 
   </div>
-</div>

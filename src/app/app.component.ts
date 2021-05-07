@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+
 import { Component, Input, OnInit, TRANSLATIONS } from '@angular/core';
 import { FilterStateTask } from './data-nvv/dao/enum/FilterStateTasks';
 import { NoValue } from './data-nvv/dao/enum/NoValue';
@@ -8,6 +8,8 @@ import { Task } from './model-nvv/Task';
 import { DataHandlerService } from './service-nvv/data-handler.service';
 import { zip } from "rxjs";
 import { concatMap, map } from "rxjs/operators";
+import { IntroService } from './service-nvv/intro.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-root',
@@ -41,10 +43,31 @@ export class AppComponent implements OnInit {
   // show/hide stat
   showStat = true;
 
+  // параметры бокового меню с категориями
+  menuOpened: boolean = true; // открыть-закрыть
+  menuMode: any = "push"; // тип выдвижения (поверх, с толканием и пр.)
+  menuPosition: any = "bottom"; // сторона
+  showBackdrop: boolean = true; // показывать фоновое затемнение или нет
+
+  // тип устройства
+  isMobile: boolean = false;
+  isTablet: boolean = false;
+
   constructor(
     private dataHandler: DataHandlerService, // фасад для работы с данными
-    private http: HttpClient
-  ) { }
+    private introService: IntroService, // вводная справоч. информация с выделением областей
+    private deviceService: DeviceDetectorService, // для определения типа устройства (моб., десктоп, планшет)
+  ) { 
+
+    // определяем тип запроса
+    this.isMobile = this.deviceService.isMobile();
+    this.isTablet = this.deviceService.isTablet();
+
+    this.showStat = true ? !this.isMobile : false; // если моб. устройство, то по-умолчанию не показывать статистику
+
+    this.setMenuValues(); // установить настройки меню
+
+  }
 
   ngOnInit(): void {
     //this.dataHandler.getAllTasks().subscribe(tasks => this.tasks = tasks);
@@ -52,6 +75,9 @@ export class AppComponent implements OnInit {
     this.dataHandler.getAllPriorities().subscribe(priorities => this.priorities = priorities);
     this.fillCategories();
     this.onSelectCategory(NoValue.Yes);
+    this.setMenuValues();
+    this.introService.startIntroJS(true);
+
   }
 
 
@@ -209,9 +235,7 @@ export class AppComponent implements OnInit {
     this.priorityFilter = priority;
     this.updateTasks();
   }
-  sendRequest() {
-    this.http.get('', { params: {} }).subscribe(result => console.log(result))
-  }
+
 
   // показывает задачи с применением всех текущий условий (категория, поиск, фильтры и пр.)
   updateTasksAndStat(): void {
@@ -243,4 +267,30 @@ export class AppComponent implements OnInit {
     this.showStat = showStat;
   }
 
+  // если закрыли меню любым способом - ставим значение false
+  onClosedMenu() {
+    this.menuOpened = false;
+  }
+
+  // параметры меню
+  private setMenuValues() {
+
+    this.menuPosition = 'left'; // меню слева
+
+    // настройки бокового меню для моб. и десктоп вариантов
+    if (this.isMobile) {
+      this.menuOpened = false; // на моб. версии по-умолчанию меню будет закрыто
+      this.menuMode = 'over'; // поверх всего контента
+      this.showBackdrop = true; // показывать темный фон или нет (нужно для мобильной версии)
+    } else {
+      this.menuOpened = true; // НЕ в моб. версии  по-умолчанию меню будет открыто (т.к. хватает места)
+      this.menuMode = 'push'; // будет "толкать" основной контент, а не закрывать его
+      this.showBackdrop = false; // показывать темный фон или нет
+    }
+  }
+
+  // показать-скрыть меню
+  toggleMenu() {
+    this.menuOpened = !this.menuOpened;
+  }
 }

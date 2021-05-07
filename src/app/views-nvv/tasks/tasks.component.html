@@ -38,21 +38,21 @@
       </mat-select>
 
       <button (click)="$event.stopPropagation(); onFilterByPriority('null')" *ngIf="filterViewPriority!==''"
-        aria-label="Clear" class="clear-icon size25 gray"
-        mat-icon-button mat-button matSuffix>
-      <mat-icon>clear</mat-icon>
-    </button>
+        aria-label="Clear" class="clear-icon size25 gray" mat-icon-button mat-button matSuffix>
+        <mat-icon>clear</mat-icon>
+      </button>
     </mat-form-field>
   </div>
 
   <div class="col-md-3 col-sm-12 text-right">
-    <div class="row">
+    <div class="row padding-top-10">
       <div class="text-left col-6">
 
-        <button (click)="$event.stopPropagation(); onFilterByStatus('All');  searchTaskText = ''; onFilterByTitle()"
+        <button class="nopadding-left" 
+          (click)="$event.stopPropagation(); onFilterByStatus('All');  searchTaskText = ''; onFilterByTitle()"
           *ngIf="selectedStatusFilter != 'All' ||  (searchTaskText != '' && searchTaskText.trim() != '') "
           aria-label="Clear" mat-button matSuffix>
-          Скинути фільтри
+          Скинути
         </button>
       </div>
 
@@ -64,10 +64,10 @@
 
   <div class="col-md-12 task-list">
     <!-- список завдань -->
-    <div class="card">
-      <div class="card-header card-header-warning">
+    <div class="card" *ngIf="!isMobile">
+      <!-- <div class="card-header card-header-warning">
         <h4 class="card-title">Стан справ</h4>
-      </div>
+      </div> -->
       <div class="card-body table-responsive" *ngIf="tasks && tasks.length > 0">
 
         <table [dataSource]="dataSource" mat-table matSort>
@@ -162,39 +162,82 @@
         <p class="not-found">Нічого не знайдено</p>
       </div>
     </div>
+
+    <!--    мобільний пристрій -->
+    <div *ngIf="isMobile && tasks.length > 0">
+      <div *ngFor="let task of tasks; let index = index; " [ngClass]="{'completed': task.completed}">
+
+
+        <div (click)="$event.stopPropagation(); openEditTaskDialog(task)"
+          [ngClass]="{'background-completed': task.completed}" class="card card-mobile">
+
+          <div [ngClass]="{'background-completed': task.completed}" [style.background-color]="getPriorityColor(task)"
+            class="mobile-priority-top">
+
+          </div>
+
+          <div class="row">
+
+            <div class="mobile-title-inner  col-9 col-md-10 align-top">
+
+
+              <div [class.completed]="task.completed" class="mobile-title">{{task.title}}</div>
+
+
+            </div>
+
+            <div class="col-2 col-md-1 align-top mobile-check text-right">
+
+              <button class="nowidth" (click)="$event.stopPropagation(); onToggleStatus(task)" *ngIf="!task.completed"
+                mat-icon-button>
+                <mat-icon (click)="$event.stopPropagation(); onToggleStatus(task)" class="check-icon-notcompleted">
+                  check_circle_outline
+                </mat-icon>
+              </button>
+
+
+              <button class="nowidth" (click)="$event.stopPropagation(); onToggleStatus(task)" *ngIf="task.completed"
+                mat-icon-button>
+                <mat-icon class="check-icon-completed">check_circle</mat-icon>
+              </button>
+            </div>
+
+
+          </div>
+
+          <div class="row">
+
+            <div class="mobile-info-inner  col-12 align-top">
+
+              <div [ngClass]="{'completed': task.completed}" class="mobile-category">
+                <p [ngClass]="{'category': !task.completed && task.category}"> {{task.category ? task.category.title :
+                  'Без категорії'}} </p>
+              </div>
+
+              <div *ngIf="task.priority" class="mobile-priority">
+                <p [ngClass]="{'priority': !task.completed, 'completed': task.completed}"
+                  [style.background-color]="getMobilePriorityBgColor(task)"> {{task.priority.title}} </p>
+              </div>
+
+
+              <div [ngClass]="{'completed': task.completed, 'novalue': task.date == null}" class="mobile-date">
+                
+                {{task.date | taskDate}}
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+    <div *ngIf="isMobile && tasks.length === 0">
+      <p class="not-found">Нічого не знайдено</p>
+    </div>
+
   </div>
 </div>
-
-<!-- <thead class="text-warning">
-      <th>#</th>
-      <th>Назва</th>
-      <th>Категорія</th>
-      <th>Пріоритет</th>
-      <th>Дата</th>
-      <th>Статус</th>
-
-      </thead>
-      <tbody>
-      <tr *ngFor="let task of tasks; let i = index" [class.completed]="task.completed">
-        <td>{{i + 1}}</td>
-        <td>{{task.title}}</td>
-        <td [class.novalue]="task.category == null">{{task.category != null ? task.category.title : 'немає'}}</td>
-        <td [class.novalue]="task.priority == null">{{task.priority != null ? task.priority.title : 'немає'}}</td>
-        <td [class.novalue]="task.date == null">{{task.date != null ? (task.date | date:'mediumDate') : 'немає'}}</td>
-        <td>{{task.completed}}</td>
-
-        <div class="form-check">
-          <label class="form-check-label">
-            <input [checked]="task.completed" class="form-check-input" type="checkbox" value=""
-                   (click)="toggleTaskCompleted(task)">
-
-            <span class="form-check-sign">
-                                <span class="check"></span>
-                            </span>
-          </label>
-        </div>
-
-      </tr>
-
-
-      </tbody> -->

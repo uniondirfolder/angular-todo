@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { SettingsDialogComponent } from 'src/app/dialog/settings-dialog/settings-dialog.component';
+import { IntroService } from 'src/app/service-nvv/intro.service';
 
 @Component({
   selector: 'app-header',
@@ -9,14 +11,23 @@ import { SettingsDialogComponent } from 'src/app/dialog/settings-dialog/settings
 })
 export class HeaderComponent implements OnInit {
   @Input()
-  categoryName: string='';
+  categoryName: string = '';
 
   @Input()
-  showStat: boolean= false;
+  showStat: boolean = false;
 
   @Output()
-  toggleStat = new EventEmitter<boolean>(); 
-  constructor(private dialog: MatDialog) { } // DIj
+  toggleStat = new EventEmitter<boolean>();
+
+  @Output()
+  toggleMenu = new EventEmitter();
+
+  isMobile: boolean = false;
+
+  constructor(private dialog: MatDialog, private introService: IntroService, 
+    private deviceDetector: DeviceDetectorService ) {
+      this.isMobile = deviceDetector.isMobile();
+     } // DIj
 
   ngOnInit(): void {
   }
@@ -32,4 +43,14 @@ export class HeaderComponent implements OnInit {
         width: '500px'
       });
   }
+
+  showIntroHelp() {
+    this.introService.startIntroJS(false)
+  }
+
+  
+  onToggleMenu(){
+    this.toggleMenu.emit();
+  }
+
 }

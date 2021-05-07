@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { OperType } from 'src/app/data-nvv/dao/enum/OperType';
 import { EditCategoryDialogComponent } from 'src/app/dialog/edit-category-dialog/edit-category-dialog.component';
 import { Category } from 'src/app/model-nvv/Category';
@@ -51,10 +52,16 @@ export class CategoriesComponent implements OnInit {
   searchCategoryTitle: string = ''; // поточне значення для пошуку категорій
   selectedCategoryMap: Map<Category, number> = new Map<Category, number>(); // список всех категорий и кол-во активных задач
 
+  isMobile: boolean = false;
+  isTablet: boolean = false;
   constructor(
     //private dataHandler: DataHandlerService,
     private dialog: MatDialog, // впроваджуємо MatDialog, щоб працювати з діалоговими вікнами
-  ) { }
+    private deviceService: DeviceDetectorService
+  ) { 
+    this.isMobile = deviceService.isMobile();
+    this.isTablet = deviceService.isTablet();
+  }
 
   ngOnInit(): void {
     // this.categories = this.dataHandler.getCategories();

@@ -1,49 +1,65 @@
-<!--<app-todo-item [todoTasks]='todoItems'></app-todo-item>
-<app-todo-item (taskEventEmitter)='appAddTask($event)'></app-todo-item>
-<app-todo-list-item [taskList]='todoItems'></app-todo-list-item>-->
+<ng-sidebar-container style="height: 100vh">
 
+    <ng-sidebar (onClosed)="onClosedMenu()" [animate]="true" [autoFocus]="false" [closeOnClickBackdrop]="true"
+      [closeOnClickOutside]="false" [mode]="menuMode" [(opened)]="menuOpened" [position]="menuPosition"
+      [showBackdrop]="showBackdrop">
 
+      <div class="sidebar" data-color="purple" data-step="1"
+        data-intro="Фільтрація завдань, додати нову/ видалити / редагування категорій" data-position='right'>
 
-<div class="wrapper ">
+        <app-categories (selectCategory)="onSelectCategory($event)" [categories]="categories"
+          (deleteCategory)="onDeleteCategory($event)" (updateCategory)="onUpdateCategory($event)"
+          (addCategory)="onAddCategory($event)" (searchCategory)="onSearchCategory($event)"
+          [selectedCategory]="selectedCategory" [categoryMap]="categoryMap"
+          [uncompletedTotal]="uncompletedTotalTasksCount">
+        </app-categories>
 
-  <app-categories (selectCategory)="onSelectCategory($event)" [categories]="categories"
-    (deleteCategory)="onDeleteCategory($event)" (updateCategory)="onUpdateCategory($event)"
-    (addCategory)="onAddCategory($event)" (searchCategory)="onSearchCategory($event)"
-    [selectedCategory]="selectedCategory" [categoryMap]="categoryMap" [uncompletedTotal]="uncompletedTotalTasksCount"></app-categories>
+      </div>
 
+    </ng-sidebar>
 
-  <div class="main-panel">
+    <div ng-sidebar-content>
 
-    <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+      <div class="main-panel">
 
-      <app-header (toggleStat)="toggleStat($event)" [categoryName]="selectedCategory.id !==0 ? selectedCategory.title: 'Всі'"
-        [showStat]="showStat">
-      </app-header>
+        <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
 
-    </nav>
+          <app-header (toggleStat)="toggleStat($event)" (toggleMenu)="toggleMenu()"
+            [categoryName]="selectedCategory.id !==0 ? selectedCategory.title: 'Всі'" [showStat]="showStat">
+          </app-header>
 
-    <div class="content">
-      <div class="container-fluid">
+        </nav>
 
-        <app-stat [completeTasksInCategory]="completedCountInCategory" [showStat]="showStat"
-          [totalTasksInCategory]="totalTasksCountInCategory" [uncompleteTasksInCategory]="uncompletedCountInCategory">
-        </app-stat>
+        <div class="content">
+          <div class="container-fluid">
 
-        <div class="row">
-          <div class="col-md-12">
+            <div data-step='2' data-intro="Список всіх завдань, статистика" data-position='top'>
+              <app-stat [completeTasksInCategory]="completedCountInCategory" [showStat]="showStat"
+                [totalTasksInCategory]="totalTasksCountInCategory"
+                [uncompleteTasksInCategory]="uncompletedCountInCategory">
+              </app-stat>
 
-            <app-tasks [tasks]="tasks" [priorities]="priorities" (updateTask)="onUpdateTask($event)"
-              (deleteTask)="onDeleteTask($event)" (selectCategory)="onSelectCategory($event)"
-              (addTask)="onAddTask($event)" (filterByTitle)="onSearchTasks($event)"
-              (filterByStatus)="onFilterTasksByStatus($event)" (filterByPriority)="onFilterTasksByPriority($event)">
-            </app-tasks>
+            </div>
 
+            <div class="row">
+
+              <div class="col-md-12">
+
+                <app-tasks [tasks]="tasks" [priorities]="priorities" (updateTask)="onUpdateTask($event)"
+                  (deleteTask)="onDeleteTask($event)" (selectCategory)="onSelectCategory($event)"
+                  (addTask)="onAddTask($event)" (filterByTitle)="onSearchTasks($event)"
+                  (filterByStatus)="onFilterTasksByStatus($event)" (filterByPriority)="onFilterTasksByPriority($event)">
+                </app-tasks>
+
+              </div>
+            </div>
           </div>
         </div>
+
+        <app-footer></app-footer>
+
       </div>
+
     </div>
 
-    <app-footer></app-footer>
-
-  </div>
-</div>
+</ng-sidebar-container>

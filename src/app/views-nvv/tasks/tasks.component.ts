@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { FilterStateTask } from 'src/app/data-nvv/dao/enum/FilterStateTasks';
 import { OperType } from 'src/app/data-nvv/dao/enum/OperType';
 import { EditTaskDialogComponent } from 'src/app/dialog/edit-task-dialog/edit-task-dialog.component';
@@ -78,10 +79,14 @@ export class TasksComponent implements OnInit, AfterViewInit {
   @Input()
   filterViewPriority: string = '';
 
+  isMobile: boolean = false;
+
   constructor(
-    // private dataHandler: DataHandlerService, // доступ к данным
+    //private dataHandler: DataHandlerService, // доступ к данным
     private dialog: MatDialog, // для открытия нового д/а (из текущего) - подтверждения crud
+    private deviceService: DeviceDetectorService
   ) {
+    this.isMobile = this.deviceService.isMobile()
   }
 
   ngOnInit(): void {
@@ -285,6 +290,18 @@ export class TasksComponent implements OnInit, AfterViewInit {
     console.log(this.selectedPriorityFilter)
     this.filterByPriority.emit(this.selectedPriorityFilter);
   }
+
+  // в зависимости от статуса задачи - вернуть фоноввый цвет
+  getMobilePriorityBgColor(task: Task): string {
+
+    if (task.priority != null && !task.completed) {
+      return task.priority.color;
+    }
+
+    return 'none';
+  }
+  
+
 }
 
 
