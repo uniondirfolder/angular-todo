@@ -18,7 +18,7 @@ export class CategoryDAOArray implements CategoryDAO {
         TestData.categories.push(arg);
         return of(arg);
     }
-    private getLastIdCategory(): number { // for test array
+    getLastIdCategory(): number { // for test array
         return Math.max.apply(Math, TestData.tasks.map(task => task.id)) + 1;
     }
     get(id: number): Observable<Category> {

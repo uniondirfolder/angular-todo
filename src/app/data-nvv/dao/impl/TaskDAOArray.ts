@@ -15,7 +15,7 @@ export class TaskDAOArray implements TaskDAO {
         return of(this.searchTasks(category, searchText, status, priority));
     }
 
-    private searchTasks(category: Category | NoValue, searchText: string | NoValue, status: boolean | FilterStateTask | NoValue.Yes, priority: Priority | NoValue): Task[] {
+    searchTasks(category: Category | NoValue, searchText: string | NoValue, status: boolean | FilterStateTask | NoValue.Yes, priority: Priority | NoValue): Task[] {
         let allTasks = TestData.tasks;
         // застосовуємо по черзі всі вимоги до пошуку і фільтрації
         if (typeof (status) !== 'string') { // costyl :)
@@ -65,7 +65,7 @@ export class TaskDAOArray implements TaskDAO {
     getTotalCount(): Observable<number> {
         return of(TestData.tasks.length);
     }
-    private categoryIsNull(category: Category | undefined): Category | NoValue {
+    categoryIsNull(category: Category | undefined): Category | NoValue {
         if(category===undefined){return NoValue.Yes}
         if (category.id === 0) { return NoValue.Yes }
         return category;
@@ -77,7 +77,7 @@ export class TaskDAOArray implements TaskDAO {
         TestData.tasks.push(arg);
         return of(arg);
     }
-    private getLastIdTask(): number { // for test array
+    getLastIdTask(): number { // for test array
         return Math.max.apply(Math, TestData.tasks.map(task => task.id)) + 1;
     }
 

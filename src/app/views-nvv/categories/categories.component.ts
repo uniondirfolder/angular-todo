@@ -55,7 +55,7 @@ export class CategoriesComponent implements OnInit {
   isMobile: boolean = false;
   isTablet: boolean = false;
   constructor(
-    //private dataHandler: DataHandlerService,
+    
     private dialog: MatDialog, // впроваджуємо MatDialog, щоб працювати з діалоговими вікнами
     private deviceService: DeviceDetectorService
   ) { 

@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
   }
 
 
-  private updateTasks() {
+  updateTasks() {
     this.dataHandler.searchTasks(
       this.selectedCategory,
       this.searchTaskText,
@@ -122,7 +122,7 @@ export class AppComponent implements OnInit {
   onAddCategory(title: string): void {
     this.dataHandler.addCategory(new Category(0, title)).subscribe(() => this.updateCategories());
   }
-  private fillCategories() {
+  fillCategories() {
 
     if (this.categoryMap) {
       this.categoryMap.clear();
@@ -137,7 +137,7 @@ export class AppComponent implements OnInit {
     });
 
   }
-  private updateCategories() {
+  updateCategories() {
     this.dataHandler.getAllCategories().subscribe(cat => this.categories = cat);
   }
 
@@ -247,7 +247,7 @@ export class AppComponent implements OnInit {
 
   }
   // refresh stat zip - join observeble methods -> call - wait - get data
-  private updateStat(): void {
+  updateStat(): void {
     zip(
       this.dataHandler.getTotalCountInCategory(this.selectedCategory),
       this.dataHandler.getCompletedCountInCategory(this.selectedCategory),
@@ -273,7 +273,7 @@ export class AppComponent implements OnInit {
   }
 
   // параметры меню
-  private setMenuValues() {
+  setMenuValues() {
 
     this.menuPosition = 'left'; // меню слева
 

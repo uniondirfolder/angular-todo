@@ -28,9 +28,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   // Посилання на компоненти таблиці
   @ViewChild('matPaginator', { static: false })
-  private paginator!: MatPaginator;
+  paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false })
-  private sort!: MatSort;
+  sort!: MatSort;
 
   tasks: Task[] = []; // Текущие задачи для отображения на странице
   priorities: Priority[] = []; // список пріоритетів (потрб для фільтрації завдань)
@@ -82,7 +82,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
   isMobile: boolean = false;
 
   constructor(
-    //private dataHandler: DataHandlerService, // доступ к данным
     private dialog: MatDialog, // для открытия нового д/а (из текущего) - подтверждения crud
     private deviceService: DeviceDetectorService
   ) {
@@ -104,7 +103,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   // демонструє справи з застосуванням усіх поточних вимог (категорія, пошук, фільтри і т.інш)
-  private fillTable(): void {
+  fillTable(): void {
     if (!this.dataSource) { return; }
 
     this.dataSource.data = this.tasks; // оновити джерело даних (дані масиву task оновилися)
@@ -134,7 +133,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     };
   }
 
-  private toggleTaskCompleted(task: Task): void {
+  toggleTaskCompleted(task: Task): void {
     task.completed = !task.completed;
   }
 
@@ -150,7 +149,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     return '#fff'; // TODO винести кольора до констант (magic string...)
   }
 
-  private addTableObjects(): void {
+  addTableObjects(): void {
     this.dataSource.sort = this.sort; // компонент сортування даних (за потреби)
     this.dataSource.paginator = this.paginator; // оновити компонент поділу на сторінки
   }

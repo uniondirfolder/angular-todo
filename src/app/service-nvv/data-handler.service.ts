@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { FilterStateTask } from '../data-nvv/dao/enum/FilterStateTasks';
 import { NoValue } from '../data-nvv/dao/enum/NoValue';
 import { CategoryDAOArray } from '../data-nvv/dao/impl/CategoryDAOArray';
@@ -22,11 +22,11 @@ import { Task } from '../model-nvv/Task';
 })
 export class DataHandlerService {
 
-  private taskDaoArray = new TaskDAOArray();
-  private categoryDaoArray = new CategoryDAOArray();
-  private priorityDaoArray = new PriorityDAOArray();
+  taskDaoArray = new TaskDAOArray();
+  categoryDaoArray = new CategoryDAOArray();
+  priorityDaoArray = new PriorityDAOArray();
 
-  constructor(private http: HttpClient) {
+  constructor() {
     //this.fillTasks();
   }
 

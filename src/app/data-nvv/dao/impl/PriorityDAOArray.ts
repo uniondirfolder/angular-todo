@@ -44,7 +44,7 @@ export class PriorityDAOArray implements PriorityDAO{
         return of(TestData.priorities);
     }
 
-    private getLastIdPriority(): number {
+    getLastIdPriority(): number {
         return Math.max.apply(Math, TestData.priorities.map(c => c.id)) + 1;
     }
 
