@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, TRANSLATIONS } from '@angular/core';
 import { FilterStateTask } from './data-nvv/dao/enum/FilterStateTasks';
 import { NoValue } from './data-nvv/dao/enum/NoValue';
 import { Category } from './model-nvv/Category';
@@ -7,6 +7,7 @@ import { Priority } from './model-nvv/Priority';
 import { Task } from './model-nvv/Task';
 import { DataHandlerService } from './service-nvv/data-handler.service';
 import { zip } from "rxjs";
+import { concatMap, map } from "rxjs/operators";
 
 @Component({
   selector: 'app-root',
@@ -15,6 +16,9 @@ import { zip } from "rxjs";
 })
 export class AppComponent implements OnInit {
   title = 'angular-todo';
+
+  // коллекция категорий с кол-вом незавершенных задач для каждой из них
+  categoryMap = new Map<Category, number>();
 
   tasks: Task[] = [];
   categories: Category[] = []; // all categories
@@ -39,16 +43,17 @@ export class AppComponent implements OnInit {
 
   constructor(
     private dataHandler: DataHandlerService, // фасад для работы с данными
-    public http: HttpClient
+    private http: HttpClient
   ) { }
 
   ngOnInit(): void {
     //this.dataHandler.getAllTasks().subscribe(tasks => this.tasks = tasks);
     this.dataHandler.getAllCategories().subscribe(categories => this.categories = categories);
     this.dataHandler.getAllPriorities().subscribe(priorities => this.priorities = priorities);
-
+    this.fillCategories();
     this.onSelectCategory(NoValue.Yes);
   }
+
 
   private updateTasks() {
     this.dataHandler.searchTasks(
@@ -73,8 +78,9 @@ export class AppComponent implements OnInit {
     this.dataHandler.deleteCategory(category).subscribe(cat => {
       this.selectedCategory.id = 0; // відкриваємо категорію "Все"
       this.selectedCategory.title = '';
-      this.onSelectCategory(this.selectedCategory);
-      //this.onSearchCategory(this.searchCategoryText);
+      this.categoryMap.delete(cat); // delete from map
+      this.onSearchCategory(this.searchCategoryText);
+      this.updateTasks();
     });
   }
 
@@ -90,7 +96,21 @@ export class AppComponent implements OnInit {
   onAddCategory(title: string): void {
     this.dataHandler.addCategory(new Category(0, title)).subscribe(() => this.updateCategories());
   }
+  private fillCategories() {
 
+    if (this.categoryMap) {
+      this.categoryMap.clear();
+    }
+
+    this.categories = this.categories.sort((a, b) => a.title.localeCompare(b.title));
+
+    // для каждой категории посчитать кол-во невыполненных задач
+
+    this.categories.forEach(cat => {
+      this.dataHandler.getUncompletedCountInCategory(cat).subscribe(count => this.categoryMap.set(cat, count));
+    });
+
+  }
   private updateCategories() {
     this.dataHandler.getAllCategories().subscribe(cat => this.categories = cat);
   }
@@ -107,26 +127,69 @@ export class AppComponent implements OnInit {
   }
 
   // new task
-  onAddTask(task: Task) {
+  /* onAddTask(task: Task) {
     this.dataHandler.addTask(task).subscribe(result => {
+      this.updateTasksAndStat();
+    });
+  } */
+  onAddTask(task: Task) {
+    this.dataHandler.addTask(task).pipe(// сначала добавляем задачу
+      concatMap(task => { // используем добавленный task (concatMap - для последовательного выполнения)
+        // .. и считаем кол-во задач в категории с учетом добавленной задачи
+        return this.dataHandler.getUncompletedCountInCategory(task.category).pipe(map(count => {
+          return ({ t: task, count }); // в итоге получаем массив с добавленной задачей и кол-вом задач для категории
+        }));
+      }
+      )).subscribe(result => {
+
+        const t = result.t as Task;
+
+        // если указана категория - обновляем счетчик для соотв. категории
+        if (t.category) {
+          this.categoryMap.set(t.category, result.count);
+        }
+
+        this.updateTasksAndStat();
+
+      });
+
+  }
+  // оновлення завдання
+  onUpdateTask(task: Task) { // for intr is good but not well for medium
+    /* this.dataHandler.updateTask(task).subscribe(cat => {
+      this.updateTasksAndStat()
+    }); */
+    this.dataHandler.updateTask(task).subscribe(() => {
+      this.fillCategories();
       this.updateTasksAndStat();
     });
   }
 
-  // оновлення завдання
-  onUpdateTask(task: Task) {
-    this.dataHandler.updateTask(task).subscribe(cat => {
-      this.updateTasksAndStat()
-    });
-  }
-
   // видалення завдання
-  onDeleteTask(task: Task) {
+  /* onDeleteTask(task: Task) {
     this.dataHandler.deleteTask(task).subscribe(cat => {
       this.updateTasksAndStat()
     });
-  }
+  } */
+  onDeleteTask(task: Task) {
+    if (task.category) {
+      this.dataHandler.deleteTask(task).pipe(
+        concatMap(task => {
+          return this.dataHandler.getUncompletedCountInCategory(task.category).pipe(map(count => {
+            return ({ t: task, count });
+          }));
+        }
+        )).subscribe(result => {
 
+          const t = result.t as Task;
+          if (t.category) this.categoryMap.set(t.category, result.count);
+
+          this.updateTasksAndStat();
+
+        });
+    }
+
+  }
   // пошук завдань
   onSearchTasks(searchString: string) {
     this.searchTaskText = searchString;
@@ -179,4 +242,5 @@ export class AppComponent implements OnInit {
   toggleStat(showStat: boolean): void {
     this.showStat = showStat;
   }
+
 }

@@ -18,6 +18,15 @@ export class CategoriesComponent implements OnInit {
   @Input()
   selectedCategory: Category = new Category(0, "");
 
+  // категории с кол-вом активных задач для каждой из них
+  @Input('categoryMap')
+  set setCategoryMap(categoryMap: Map<Category, number>) {
+    this.selectedCategoryMap = categoryMap;
+  }
+
+  @Input()
+  uncompletedTotal: number= -1;
+
   // обрали категорію з списку
   @Output()
   selectCategory = new EventEmitter<Category>();
@@ -40,6 +49,7 @@ export class CategoriesComponent implements OnInit {
 
   indexMouseMove: number = 0; // для відображення іконки редагування при наведенні на категорію
   searchCategoryTitle: string = ''; // поточне значення для пошуку категорій
+  selectedCategoryMap: Map<Category, number> = new Map<Category, number>(); // список всех категорий и кол-во активных задач
 
   constructor(
     //private dataHandler: DataHandlerService,

@@ -1,11 +1,9 @@
-import { HttpClient } from "@angular/common/http";
 import { Category } from "../model-nvv/Category";
 import { Priority } from "../model-nvv/Priority";
 import { Task } from "../model-nvv/Task";
 
-export class  TestData {
+export class TestData {
 
-    
     static categories: Category[] = [
         {id: 1, title: 'Робота'},
         {id: 2, title: 'Сім*я'},

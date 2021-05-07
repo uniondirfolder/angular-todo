@@ -1,9 +1,12 @@
+import { HttpClient } from "@angular/common/http";
+import { Inject } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { Category } from "src/app/model-nvv/Category";
 import { TestData } from "../../TestData";
 import { CategoryDAO } from "../interface/CategoryDAO";
 
 export class CategoryDAOArray implements CategoryDAO {
+
     search(title: string): Observable<Category[]> {
         return of(TestData.categories.filter(
             cat => cat.title.toUpperCase().includes(title.toUpperCase()))
@@ -42,6 +45,7 @@ export class CategoryDAOArray implements CategoryDAO {
         return of(arg);
     }
     getAll(): Observable<Category[]> {
+
         return of(TestData.categories);
     }
 

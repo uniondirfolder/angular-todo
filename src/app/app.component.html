@@ -9,7 +9,7 @@
   <app-categories (selectCategory)="onSelectCategory($event)" [categories]="categories"
     (deleteCategory)="onDeleteCategory($event)" (updateCategory)="onUpdateCategory($event)"
     (addCategory)="onAddCategory($event)" (searchCategory)="onSearchCategory($event)"
-    [selectedCategory]="selectedCategory"></app-categories>
+    [selectedCategory]="selectedCategory" [categoryMap]="categoryMap" [uncompletedTotal]="uncompletedTotalTasksCount"></app-categories>
 
 
   <div class="main-panel">

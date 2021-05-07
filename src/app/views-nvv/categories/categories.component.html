@@ -33,7 +33,8 @@
 
         <li class="nav-item category" (click)="onShowAllTasksCategories()" [class.active]="selectedCategory.id===0">
           <a class="nav-link pointer">
-            <span class="all-category-title">Усі</span>
+            <span class="all-category-title">Всі</span>
+            <span class="uncompleted-count">{{uncompletedTotal}}</span>
           </a>
         </li>
 
@@ -43,19 +44,19 @@
           <p class="not-found">Нічого незнайдено</p>
         </div>
 
-        <li (click)="onShowTasksByCategory(category)" *ngFor="let category of categories; let index=index"
-          class="nav-item pointer" [class.active]="category === selectedCategory" (mouseleave)="onShowEditIcon(-1)"
+        <li (click)="onShowTasksByCategory(mapValue.key)" *ngFor="let mapValue of selectedCategoryMap | keyvalue; let index=index"
+          class="nav-item pointer" [class.active]="mapValue.key === selectedCategory" (mouseleave)="onShowEditIcon(-1)"
           (mouseenter)="onShowEditIcon(index)">
 
           <a class="nav-link">
-            <span class="category-title">{{category.title}}</span>
+            <span class="category-title">{{mapValue.key.title}}</span>
             <span class="edit-category-icon-aria">
-              <mat-icon (click)="$event.stopPropagation(); onOpenEditDialog(category)" *ngIf="indexMouseMove === index"
+              <mat-icon (click)="$event.stopPropagation(); onOpenEditDialog(mapValue.key)" *ngIf="indexMouseMove === index"
                 class="edit-category-icon">edit</mat-icon>
             </span>
-
+            <span class="uncompleted-count">{{mapValue.value}}</span>
           </a>
-
+          
         </li>
       </ul>
     </div>

@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { FilterStateTask } from '../data-nvv/dao/enum/FilterStateTasks';
@@ -25,33 +26,10 @@ export class DataHandlerService {
   private categoryDaoArray = new CategoryDAOArray();
   private priorityDaoArray = new PriorityDAOArray();
 
-  constructor() {
+  constructor(private http: HttpClient) {
     //this.fillTasks();
   }
 
-  /*  getCategories(): Category[] { //part 1
-     return TestData.categories;
-   }
-   getTasks(): Task[] {
-     return TestData.tasks;
-   }
-   getTasksByCategory(category: Category): Task[] {
-     const tasks = TestData.tasks.filter(task => task.category === category);
-     return tasks;
-   } */
-
-  /* //rxjs (Subject -> BehaviorSubject) must init value part 2
-  taskSubject = new BehaviorSubject<Task[]>(TestData.tasks);
-  categoriesSubject = new BehaviorSubject<Category[]>(TestData.categories);
-
-  fillTasks() {
-    this.taskSubject.next(TestData.tasks)
-  }
-
-  fillTasksByCategory(category: Category) {
-    const tasks = TestData.tasks.filter(task => task.category === category);
-    this.taskSubject.next(tasks);
-  } */
 
   getAllTasks(): Observable<Task[]> {
     return this.taskDaoArray.getAll();
@@ -99,7 +77,7 @@ export class DataHandlerService {
     return this.taskDaoArray.getUncompletedCountInCategory(new Category(0, ''));
   }
 
-  getUncompletedCountInCategory(category: Category): Observable<number> {
+  getUncompletedCountInCategory(category: Category | undefined): Observable<number> {
     return this.taskDaoArray.getUncompletedCountInCategory(category);
   }
 
