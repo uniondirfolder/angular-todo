@@ -1,6 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { OperType } from 'src/app/data-nvv/dao/enum/OperType';
+import { Priority } from 'src/app/model-nvv/Priority';
+import { DialogAction, DialogResult } from 'src/app/object/DialogResult';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
@@ -9,50 +11,63 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
   styleUrls: ['./edit-priority-dialog.component.css']
 })
 export class EditPriorityDialogComponent implements OnInit {
-  dialogTitle: string = '';
-  priorityTitle: string = '';
-  operType: OperType = OperType.EMPTY;
+
+  //@ts-ignore
+  dialogTitle: string; // текст для диалогового окна
+  //@ts-ignore
+  priority: Priority; // текст для названия приоритета (при реактировании или добавлении)
+  canDelete = false; // можно ли удалять объект (активна ли кнопка удаления)
 
   constructor(
-    private dialogRef: MatDialogRef<EditPriorityDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: [string, string, OperType],
-    private dialog: MatDialog
+    private dialogRef: MatDialogRef<EditPriorityDialogComponent>, // // для возможности работы с текущим диалог. окном
+    @Inject(MAT_DIALOG_DATA) private data: [Priority, string], // данные, которые передали в диалоговое окно
+    private dialog: MatDialog // для открытия нового диалогового окна (из текущего) - например для подтверждения удаления
   ) { }
 
   ngOnInit(): void {
-    this.priorityTitle = this.data[0];
+    this.priority = this.data[0];
     this.dialogTitle = this.data[1];
-    this.operType = this.data[2];
+
+    // если было передано значение, значит это редактирование, поэтому делаем удаление возможным (иначе скрываем иконку)
+    if (this.priority && this.priority.id > 0) {
+      this.canDelete = true;
+    }
+  }
+  // нажали ОК
+  confirm(): void {
+    this.dialogRef.close(new DialogResult(DialogAction.SAVE, this.priority)); // передаем обратно измененный объект
   }
 
-  onConfirm(): void {
-    this.dialogRef.close(this.priorityTitle);
+  // нажали отмену
+  cancel(): void {
+    this.dialogRef.close(new DialogResult(DialogAction.CANCEL));
   }
 
-  onCancel(): void {
-    this.dialogRef.close(false);
-  }
-
+  // нажали Удалить
   delete(): void {
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       maxWidth: '500px',
       data: {
-        dialogTitle: 'Підтвердіть дію.',
-        message: `Ви дійсно бажаєте видалити приорітет: "${this.priorityTitle}"?`
+        dialogTitle: 'Подтвердите действие',
+        message: `Вы действительно хотите удалить приоритет: "${this.priority.title}"? (задачам проставится значение 'Без приоритета')`
       },
       autoFocus: false
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.dialogRef.close('delete');
+
+      if (!(result)) { // если просто закрыли окно, ничего не нажав
+        return;
+      }
+
+
+      if (result.action === DialogAction.OK) {
+        this.dialogRef.close(new DialogResult(DialogAction.DELETE)); // нажали удалить
       }
     });
 
 
   }
-  canDelete(): boolean {
-    return this.operType == OperType.EDIT;
-  }
+
 }

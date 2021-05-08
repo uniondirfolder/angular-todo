@@ -1,5 +1,4 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 // базовые методы доступа к данным, одинаковые для всех классов,
@@ -7,11 +6,8 @@ import { Observable } from 'rxjs';
 
 // JSON формируется автоматически для параметров и результатов
 
-@Injectable({
-  providedIn: 'root'
-})
 export class CommonService<T> {
-  readonly url: string;
+  url: string;
   constructor(url: string,  // базовый URL для доступа к данным
     private httpClient: HttpClient // для выполнения HTTP запросов
   ) { this.url = url }

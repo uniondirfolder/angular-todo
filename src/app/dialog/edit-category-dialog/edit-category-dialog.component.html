@@ -6,11 +6,26 @@
 
 
     <mat-form-field>
-        <mat-label>Назва (15 символів)</mat-label>
-        <input #inputTitle (keydown.enter)="onConfirm()" [(ngModel)]="categoryTitle" matInput maxlength="15" autoComplete='off' />
+        <mat-label>Название (15 символов)</mat-label>
+        <input
+            #inputTitle
 
-        <button (click)="categoryTitle= ''" *ngIf="categoryTitle.trim().length > 0" aria-label="Clear"
-            class="clear-icon size25" mat-button mat-icon-button matSuffix>
+            matInput maxlength="15"
+
+            [(ngModel)]="category.title"
+            (keydown.enter)="confirm()"
+
+        />
+
+        <button
+                *ngIf="category.title.trim().length > 0"
+
+                class="clear-icon"
+                mat-button matSuffix mat-icon-button aria-label="Clear"
+
+                (click)="category.title= ''"
+
+        >
             <mat-icon>clear</mat-icon>
         </button>
     </mat-form-field>
@@ -21,19 +36,37 @@
 <mat-dialog-actions>
 
     <div class="col-12 text-center">
-        <button (click)="onConfirm()" [disabled]="inputTitle.value.trim().length==0" color="primary" mat-raised-button>
-            Зберегти
+
+        <button
+                mat-raised-button color="primary"
+                (click)="confirm()"
+                [disabled]="inputTitle.value.trim().length==0"
+        >
+            Сохранить
         </button>
-        <button (click)="onCancel()" mat-raised-button>Відміна</button>
+
+        <button mat-raised-button (click)="cancel()">Отмена</button>
 
     </div>
 
 
     <div class="col-12 text-center">
-        <button *ngIf="canDelete()" (click)="onDelete()" class="red" mat-button>
-            Вилучити
+
+
+        <button
+                *ngIf="canDelete"
+                mat-button
+                (click)="delete()" class="red">
+
+            Удалить
+
         </button>
+
+
     </div>
 
 
 </mat-dialog-actions>
+
+
+

@@ -4,7 +4,7 @@ import { Priority } from "./Priority";
 export class Task {
     id: number;
     title: string;
-    completed: boolean = false;
+    completed: number; // вместо boolean, чтобы удобный было записывать в БД
     priority?: Priority;
     category?: Category;
     date?: Date;
@@ -14,7 +14,7 @@ export class Task {
     //@ts-ignore
     oldCategory: Category;
 
-    constructor(id: number, title: string, completed: boolean, priority?: Priority, category?: Category, date?: Date, oldCategory?: Category) {
+    constructor(id: number, title: string, completed: number, priority?: Priority, category?: Category, date?: Date, oldCategory?: Category) {
         this.id = id;
         this.title = title;
         this.completed = completed;

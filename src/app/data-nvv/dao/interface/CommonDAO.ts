@@ -1,16 +1,22 @@
 import { Observable } from "rxjs";
 
+// все методы возвращают Observable - для асинхронности и работы в реактивном стиле
 export interface CommonDAO<T> { // обобщеный интерфейс
     // CRUD
 
-    add(arg: T): Observable<T>;
+    // получить все значения
+    findAll(): Observable<T[]>;
 
-    get(id: number): Observable<T>;
+    // получить одно значение по id
+    findById(id: number): Observable<T>; // получение значения по уникальному id
 
-    delete(obj: T): Observable<T>;
-
+    // обновить значение
     update(obj: T): Observable<T>;
 
-    getAll(): Observable<T[]>;
+    // удалить значение
+    delete(id: number): Observable<T>; // удаление по id
+
+    // добавить значение
+    add(obj: T): Observable<T>;
 }
 

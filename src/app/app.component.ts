@@ -5,7 +5,7 @@ import { NoValue } from './data-nvv/dao/enum/NoValue';
 import { Category } from './model-nvv/Category';
 import { Priority } from './model-nvv/Priority';
 import { Task } from './model-nvv/Task';
-import { zip } from "rxjs";
+import { Observable, zip } from "rxjs";
 import { concatMap, map } from "rxjs/operators";
 import { IntroService } from './service-nvv/intro.service';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -28,8 +28,7 @@ export class AppComponent implements OnInit {
   title = 'angular-todo';
 
   // если равно null - по-умолчанию будет выбираться категория 'Все'
-  //@ts-ignore
-  selectedCategory: Category = null;
+  selectedCategory: Category = new Category(0,'');
 
   tasks: Task[] = []; // текущие задачи для отображения на странице
   priorities: Priority[] = []; // приоритеты для отображения
@@ -39,6 +38,9 @@ export class AppComponent implements OnInit {
   isMobile: boolean;
   isTablet: boolean;
 
+  showStat = true;   // показать/скрыть статистику
+  showSearch = true;  // показать/скрыть поиск
+
   //@ts-ignore
   stat: Stat; // данные общей статистики
   dash: DashboardData = new DashboardData(); // данные для дашбоарда
@@ -46,8 +48,8 @@ export class AppComponent implements OnInit {
 
   // параметры бокового меню с категориями
   menuOpened: boolean = false; // открыть-закрыть
-  menuMode: string = ''; // тип выдвижения (поверх, с толканием и пр.)
-  menuPosition: string = '';
+  menuMode: any; // тип выдвижения (поверх, с толканием и пр.)
+  menuPosition: any;
   showBackdrop: boolean = false;
 
   readonly defaultPageSize = 5;
@@ -83,6 +85,7 @@ export class AppComponent implements OnInit {
       this.uncompletedCountForCategoryAll = this.stat.uncompletedTotal;
 
       // заполнить категории
+      //@ts-ignore
       this.fillAllCategories().subscribe(res => {
         this.categories = res;
 
@@ -160,7 +163,7 @@ export class AppComponent implements OnInit {
     this.selectedCategory = category; // запоминаем выбранную категорию
 
     // для поиска задач по данной категории
-    this.taskSearchValues.categoryId = category ? category.id : null;
+    this.taskSearchValues.categoryId = category ? category.id : 0;
 
     // обновить список задач согласно выбранной категории и другим параметрам поиска из taskSearchValues
     this.searchTasks(this.taskSearchValues);
@@ -183,7 +186,7 @@ export class AppComponent implements OnInit {
   // удаление категории
   deleteCategory(category: Category) {
     this.categoryService.delete(category.id).subscribe(cat => {
-      this.selectedCategory = null; // выбираем категорию "Все"
+      this.selectedCategory = new Category(0,''); // выбираем категорию "Все"
 
       this.searchCategory(this.categorySearchValues);
       this.selectCategory(this.selectedCategory);
@@ -406,7 +409,7 @@ export class AppComponent implements OnInit {
   getCategoryFromArray(id: number): Category {
     const tmpCategory = this.categories.find(t => t.id === id);
     if(tmpCategory) return tmpCategory;
-    else return new 
+    else return new Category(0,'')
   }
 
   getCategoryIndex(category: Category): number {

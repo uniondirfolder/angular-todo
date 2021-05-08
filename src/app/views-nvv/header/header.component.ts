@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { SettingsDialogComponent } from 'src/app/dialog/settings-dialog/settings-dialog.component';
+import { Priority } from 'src/app/model-nvv/Priority';
+import { DialogAction } from 'src/app/object/DialogResult';
 import { IntroService } from 'src/app/service-nvv/intro.service';
 
 @Component({
@@ -9,48 +11,78 @@ import { IntroService } from 'src/app/service-nvv/intro.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
+
+// "presentational component": отображает полученные данные и отправляет какие-либо действия обработчику
+// назначение - работа с меню и другими данными вверху страницы
+// класс не видит dataHandler, т.к. напрямую с ним не должен работать
 export class HeaderComponent implements OnInit {
+  // ----------------------- входящие параметры ----------------------------
+
   @Input()
   categoryName: string = '';
 
   @Input()
   showStat: boolean = false;
 
-  @Output()
-  toggleStat = new EventEmitter<boolean>();
+  // ----------------------- исходящие действия----------------------------
 
   @Output()
-  toggleMenu = new EventEmitter();
+  toggleStat = new EventEmitter<boolean>(); // показать/скрыть статистику
 
-  isMobile: boolean = false;
+  @Output()
+  toggleMenu = new EventEmitter(); // показать/скрыть статистику
 
-  constructor(private dialog: MatDialog, private introService: IntroService, 
-    private deviceDetector: DeviceDetectorService ) {
-      this.isMobile = deviceDetector.isMobile();
-     } // DIj
+  @Output()
+  settingsChanged = new EventEmitter<Priority[]>();
+
+  // -------------------------------------------------------------------------
+
+
+  isMobile: boolean; // мобильное ли устройство
+
+  constructor(private introService: IntroService, // сервис для вводной справки
+    private dialog: MatDialog, // для отображения диалоговых окон
+    private deviceService: DeviceDetectorService // для определения устройства пользователя
+  ) {
+    this.isMobile = deviceService.isMobile();
+  } // DIj
 
   ngOnInit(): void {
+    this.checkCategory();
   }
-  onToggleStat(): void {
-    this.toggleStat.emit(!this.showStat);
-  }
-
   // окно настроек
-  showSettings(): void {
+  showSettings() {
     const dialogRef = this.dialog.open(SettingsDialogComponent,
       {
         autoFocus: false,
         width: '500px'
       });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (result && result.action === DialogAction.SETTINGS_CHANGE) {
+        this.settingsChanged.emit(result.obj);
+        return;
+      }
+    });
   }
+
 
   showIntroHelp() {
-    this.introService.startIntroJS(false)
+    this.introService.startIntroJS(false);
   }
 
-  
-  onToggleMenu(){
-    this.toggleMenu.emit();
+  // скрыть/показать статистику
+  onToggleStat() {
+    this.toggleStat.emit(!this.showStat); // вкл/выкл статистику
   }
 
+  // скрыть/показать левое меню с категоряими
+  onToggleMenu() {
+    this.toggleMenu.emit(); // показать/скрыть меню
+  }
+
+  checkCategory() {
+    if (this.categoryName === '') { this.categoryName = 'Все' }
+  }
 }

@@ -108,6 +108,7 @@ export class CategoriesComponent implements OnInit {
     this.isMobile = deviceService.isMobile();
   }
   ngOnInit(): void {
+    
   }
 
   // поиск категории
@@ -125,7 +126,7 @@ export class CategoriesComponent implements OnInit {
   }
 
   // выбираем категорию для отображения соотв. задач
-  showCategory(category: Category) {
+  showCategory(category: Category | null) {
 
     // если не изменилось значение, ничего не делать (чтобы лишний раз не делать запрос данных)
     if (this.selectedCategory === category) {

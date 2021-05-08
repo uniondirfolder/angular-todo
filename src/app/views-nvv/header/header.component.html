@@ -1,28 +1,38 @@
-<div class="container-flex">
-
-    <div class="row settings">
-
-        <div class="col-10 text-left align-self-top">
-
-            <button mat-icon-button type="button" (click)="onToggleMenu()">
-                <mat-icon>menu</mat-icon>
-            </button>
-
-            <p class="navbar-brand">{{categoryName}}</p>
-            <p (click)="onToggleStat()" *ngIf="showStat && !isMobile" class="link navbar-brand">Приховати статистику</p>
-            <p (click)="onToggleStat()" *ngIf="!showStat && !isMobile" class="link navbar-brand">Відобразити статистику </p>
-        </div>
+<div class="container-fluid settings">
 
 
-        <div class="col-2 text-right align-self-top">
+    <!--  кнопка открытия-закрытия меню-->
+    <div class="col-8 text-left align-self-top">
 
-            <button (click)="showSettings()" class="header-icon" mat-icon-button>
-                <mat-icon>settings</mat-icon>
-            </button>
+        <button mat-icon-button type="button" (click)="onToggleMenu()">
 
-            <button *ngIf="!isMobile" class="header-icon" mat-icon-button (click)="showIntroHelp()">
-                <mat-icon>help</mat-icon>
-            </button>
-        </div>
+            <mat-icon>menu</mat-icon>
+
+        </button>
+
+
+        <p class="link navbar-brand" (click)="onToggleStat()" *ngIf="showStat && !isMobile">Скрыть статистику</p>
+        <p class="link navbar-brand" (click)="onToggleStat()" *ngIf="!showStat && !isMobile">Показать
+            статистику </p>
+        <p class="navbar-brand"><span *ngIf="!isMobile" >Категория:</span> "{{categoryName}}"</p>
+
+    </div>
+
+
+    <!--  помощь, настройки-->
+    <div class="col-4 text-right align-self-top">
+
+        <button mat-icon-button (click)="showSettings()" class="header-icon">
+            <mat-icon>settings</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="showIntroHelp()" *ngIf="!isMobile" class="header-icon">
+            <mat-icon>help</mat-icon>
+        </button>
+
+
     </div>
 </div>
+
+
+
