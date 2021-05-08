@@ -4,7 +4,6 @@ import { OperType } from 'src/app/data-nvv/dao/enum/OperType';
 import { Category } from 'src/app/model-nvv/Category';
 import { Priority } from 'src/app/model-nvv/Priority';
 import { Task } from 'src/app/model-nvv/Task';
-import { DataHandlerService } from 'src/app/service-nvv/data-handler.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
@@ -31,7 +30,6 @@ export class EditTaskDialogComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<EditTaskDialogComponent>, // для взаимодействии с текущим д/а
     @Inject(MAT_DIALOG_DATA) private data: [Task, string, OperType], // данные: которые передали в д/а
-    private dataHandler: DataHandlerService, // ссылка на сервис для работы с данными
     private dialog: MatDialog, // для открытия нового д/а (из текущего) - подтверждения crud
   ) { }
 

@@ -43,6 +43,10 @@ import { PrioritiesComponent } from './views-nvv/priorities/priorities.component
 import { EditPriorityDialogComponent } from './dialog/edit-priority-dialog/edit-priority-dialog.component';
 import { SettingsDialogComponent } from './dialog/settings-dialog/settings-dialog.component';
 import { SidebarModule } from 'ng-sidebar';
+import { TASK_URL_TOKEN } from './data-nvv/dao/impl/task.service';
+import { CATEGORY_URL_TOKEN } from './data-nvv/dao/impl/category.service';
+import { PRIORITY_URL_TOKEN } from './data-nvv/dao/impl/priority.service';
+import { STAT_URL_TOKEN } from './data-nvv/dao/impl/stat.service';
 
 
 registerLocaleData(localeUk);
@@ -88,7 +92,27 @@ registerLocaleData(localeUk);
     SidebarModule.forRoot(),
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: TASK_URL_TOKEN,
+      useValue: 'http://localhost:8080/task'
+    },
+
+    {
+      provide: CATEGORY_URL_TOKEN,
+      useValue: 'http://localhost:8080/category'
+    },
+
+    {
+      provide: PRIORITY_URL_TOKEN,
+      useValue: 'http://localhost:8080/priority'
+    },
+    
+    {
+      provide: STAT_URL_TOKEN,
+      useValue: 'http://localhost:8080/stat'
+    },
+  ],
   entryComponents: [
     EditTaskDialogComponent,
     ConfirmDialogComponent,
@@ -96,7 +120,7 @@ registerLocaleData(localeUk);
     AboutDialogComponent,
     SettingsDialogComponent,
     EditPriorityDialogComponent
-    
+
   ],
   bootstrap: [AppComponent]
 })

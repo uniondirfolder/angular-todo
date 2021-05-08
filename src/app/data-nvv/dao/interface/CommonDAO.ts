@@ -5,7 +5,7 @@ export interface CommonDAO<T> { // обобщеный интерфейс
 
     add(arg: T): Observable<T>;
 
-    get(id: number): Observable<T | undefined>;
+    get(id: number): Observable<T>;
 
     delete(obj: T): Observable<T>;
 

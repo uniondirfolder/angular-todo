@@ -10,7 +10,6 @@ import { EditTaskDialogComponent } from 'src/app/dialog/edit-task-dialog/edit-ta
 import { Category } from 'src/app/model-nvv/Category';
 import { Priority } from 'src/app/model-nvv/Priority';
 import { Task } from 'src/app/model-nvv/Task';
-import { DataHandlerService } from 'src/app/service-nvv/data-handler.service';
 import { ConfirmDialogComponent } from '../../dialog/confirm-dialog/confirm-dialog.component';
 
 @Component({

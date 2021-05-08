@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Priority } from 'src/app/model-nvv/Priority';
-import { DataHandlerService } from 'src/app/service-nvv/data-handler.service';
 
 @Component({
   selector: 'app-settings-dialog',
@@ -18,7 +17,6 @@ export class SettingsDialogComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<SettingsDialogComponent>, // для возможности работы с текущим диалог. окном
-    private dataHandler: DataHandlerService // ссылка на сервис для работы с данными
     
   ) { this.prioritiesSet=[] }
 

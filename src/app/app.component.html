@@ -7,11 +7,18 @@
       <div class="sidebar" data-color="purple" data-step="1"
         data-intro="Фільтрація завдань, додати нову/ видалити / редагування категорій" data-position='right'>
 
-        <app-categories (selectCategory)="onSelectCategory($event)" [categories]="categories"
-          (deleteCategory)="onDeleteCategory($event)" (updateCategory)="onUpdateCategory($event)"
-          (addCategory)="onAddCategory($event)" (searchCategory)="onSearchCategory($event)"
-          [selectedCategory]="selectedCategory" [categoryMap]="categoryMap"
+        <app-categories
+
+          (addCategory)="addCategory($event)"
+          (deleteCategory)="deleteCategory($event)"
+          (searchCategory)="searchCategory($event)" 
+          (selectCategory)="selectCategory($event)"         
+          (updateCategory)="updateCategory($event)"  
+          
+          [categories]="categories"
+          [selectedCategory]="selectedCategory" 
           [uncompletedTotal]="uncompletedTotalTasksCount">
+
         </app-categories>
 
       </div>

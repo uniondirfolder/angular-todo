@@ -5,11 +5,19 @@ import { NoValue } from './data-nvv/dao/enum/NoValue';
 import { Category } from './model-nvv/Category';
 import { Priority } from './model-nvv/Priority';
 import { Task } from './model-nvv/Task';
-import { DataHandlerService } from './service-nvv/data-handler.service';
 import { zip } from "rxjs";
 import { concatMap, map } from "rxjs/operators";
 import { IntroService } from './service-nvv/intro.service';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { Stat } from './model-nvv/Stat';
+import { CategoryService } from './data-nvv/dao/impl/category.service';
+import { TaskService } from './data-nvv/dao/impl/task.service';
+import { PriorityService } from './data-nvv/dao/impl/priority.service';
+import { StatService } from './data-nvv/dao/impl/stat.service';
+import { MatDialog } from '@angular/material/dialog';
+import { CategorySearchValues, TaskSearchValues } from './data-nvv/dao/interface/SearchObjects';
+import { DashboardData } from './object/DashboardData';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-root',
@@ -19,278 +27,422 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 export class AppComponent implements OnInit {
   title = 'angular-todo';
 
-  // коллекция категорий с кол-вом незавершенных задач для каждой из них
-  categoryMap = new Map<Category, number>();
+  // если равно null - по-умолчанию будет выбираться категория 'Все'
+  //@ts-ignore
+  selectedCategory: Category = null;
 
-  tasks: Task[] = [];
-  categories: Category[] = []; // all categories
-  priorities: Priority[] = []; // all priorities
-  selectedCategory: Category = new Category(0, '');
-
-  // пошук
-  searchTaskText = ''; // поточне значення для пошуку завдань
-  searchCategoryText = ''; // поточне значення для пошуку категорій
-
-  // фільтрація
-  statusFilter: FilterStateTask = FilterStateTask.All;
-  priorityFilter: Priority = new Priority(0, '', '');
-
-  // статистика
-  totalTasksCountInCategory: number = -1;
-  completedCountInCategory: number = -1;
-  uncompletedCountInCategory: number = -1;
-  uncompletedTotalTasksCount: number = -1;
-  // show/hide stat
-  showStat = true;
-
-  // параметры бокового меню с категориями
-  menuOpened: boolean = true; // открыть-закрыть
-  menuMode: any = "push"; // тип выдвижения (поверх, с толканием и пр.)
-  menuPosition: any = "bottom"; // сторона
-  showBackdrop: boolean = true; // показывать фоновое затемнение или нет
+  tasks: Task[] = []; // текущие задачи для отображения на странице
+  priorities: Priority[] = []; // приоритеты для отображения
+  categories: Category[] = []; // категории для отображения и фильтрации
 
   // тип устройства
-  isMobile: boolean = false;
-  isTablet: boolean = false;
+  isMobile: boolean;
+  isTablet: boolean;
+
+  //@ts-ignore
+  stat: Stat; // данные общей статистики
+  dash: DashboardData = new DashboardData(); // данные для дашбоарда
+
+
+  // параметры бокового меню с категориями
+  menuOpened: boolean = false; // открыть-закрыть
+  menuMode: string = ''; // тип выдвижения (поверх, с толканием и пр.)
+  menuPosition: string = '';
+  showBackdrop: boolean = false;
+
+  readonly defaultPageSize = 5;
+  readonly defaultPageNumber = 0;
+
+  uncompletedCountForCategoryAll: number = 0; // для категории Все
+
+
+  totalTasksFounded: number = 0; // сколько всего найдено данных
+
+  // параметры поисков
+  taskSearchValues = new TaskSearchValues(); // экземпляр создаем позже, когда подгрузим данные из cookies
+  categorySearchValues = new CategorySearchValues(); // экземпляр можно создать тут же, т.к. не загружаем из cookies
+
+
 
   constructor(
-    private dataHandler: DataHandlerService, // фасад для работы с данными
+    // сервисы для работы с данными (фасад)
+    private taskService: TaskService,
+    private categoryService: CategoryService,
+    private priorityService: PriorityService,
+    private statService: StatService,
+    private dialog: MatDialog, // работа с диалог. окнами
     private introService: IntroService, // вводная справоч. информация с выделением областей
-    private deviceService: DeviceDetectorService, // для определения типа устройства (моб., десктоп, планшет)
-  ) { 
+    private deviceService: DeviceDetectorService // для определения типа устройства (моб., десктоп, планшет)
+  ) {
 
-    // определяем тип запроса
-    this.isMobile = this.deviceService.isMobile();
-    this.isTablet = this.deviceService.isTablet();
+    // не рекомендуется вкладывать subscribe друг в друга,
+    // но чтобы не усложнять код цепочками rxjs - попроще 
 
-    this.showStat = true ? !this.isMobile : false; // если моб. устройство, то по-умолчанию не показывать статистику
+    this.statService.getOverallStat().subscribe((result => {     // сначала получаем данные статистики
+      this.stat = result;
+      this.uncompletedCountForCategoryAll = this.stat.uncompletedTotal;
 
-    this.setMenuValues(); // установить настройки меню
+      // заполнить категории
+      this.fillAllCategories().subscribe(res => {
+        this.categories = res;
+
+
+        // первоначальное отображение задач при загрузке приложения
+        // запускаем толко после выполнения статистики (т.к. понадобятся ее данные) и загруженных категорий
+        this.selectCategory(this.selectedCategory);
+
+      });
+
+
+    }));
+
+
+    // определяем тип устройства
+    this.isMobile = deviceService.isMobile();
+    this.isTablet = deviceService.isTablet();
+
+
+    this.setMenuDisplayParams(); // параметры отображения меню (зависит от устройства пользователя)
 
   }
 
   ngOnInit(): void {
-    //this.dataHandler.getAllTasks().subscribe(tasks => this.tasks = tasks);
-    this.dataHandler.getAllCategories().subscribe(categories => this.categories = categories);
-    this.dataHandler.getAllPriorities().subscribe(priorities => this.priorities = priorities);
-    this.fillCategories();
-    this.onSelectCategory(NoValue.Yes);
-    this.setMenuValues();
-    this.introService.startIntroJS(true);
 
-  }
+    // заполнить приоритеты
+    this.fillAllPriorities();
 
 
-  updateTasks() {
-    this.dataHandler.searchTasks(
-      this.selectedCategory,
-      this.searchTaskText,
-      this.statusFilter,
-      this.priorityFilter
-    ).subscribe((tasks: Task[]) => {
-      this.tasks = tasks;
-    });
-  }
-
-  // зміна категорії
-  onSelectCategory(category: Category | NoValue) {
-
-    if (category != NoValue.Yes) { this.selectedCategory = category }
-    this.updateTasksAndStat();
-  }
-
-  // видалення категорії
-  onDeleteCategory(category: Category) {
-    this.dataHandler.deleteCategory(category).subscribe(cat => {
-      this.selectedCategory.id = 0; // відкриваємо категорію "Все"
-      this.selectedCategory.title = '';
-      this.categoryMap.delete(cat); // delete from map
-      this.onSearchCategory(this.searchCategoryText);
-      this.updateTasks();
-    });
-  }
-
-  // оновлення категорії
-  onUpdateCategory(category: Category) {
-    this.dataHandler.updateCategory(category).subscribe(() => {
-      //this.onSelectCategory(this.selectedCategory);
-      this.onSearchCategory(this.searchCategoryText);
-    });
-  }
-
-  // new category
-  onAddCategory(title: string): void {
-    this.dataHandler.addCategory(new Category(0, title)).subscribe(() => this.updateCategories());
-  }
-  fillCategories() {
-
-    if (this.categoryMap) {
-      this.categoryMap.clear();
+    // для мобильных и планшетов - не показывать интро
+    if (!this.isMobile && !this.isTablet) {
+      // this.introService.startIntroJS(true); // при первом запуске приложения - показать интро
     }
 
-    this.categories = this.categories.sort((a, b) => a.title.localeCompare(b.title));
 
-    // для каждой категории посчитать кол-во невыполненных задач
+  }
 
-    this.categories.forEach(cat => {
-      this.dataHandler.getUncompletedCountInCategory(cat).subscribe(count => this.categoryMap.set(cat, count));
+  // заполняет массив приоритетов
+  fillAllPriorities() {
+
+    this.priorityService.findAll().subscribe(result => {
+      this.priorities = result;
     });
 
-  }
-  updateCategories() {
-    this.dataHandler.getAllCategories().subscribe(cat => this.categories = cat);
-  }
-
-  // search category
-  onSearchCategory(title: string): void {
-
-    this.searchCategoryText = title;
-
-    this.dataHandler.searchCategories(title).subscribe(categories => {
-      this.categories = categories;
-
-    });
-  }
-
-  // new task
-  /* onAddTask(task: Task) {
-    this.dataHandler.addTask(task).subscribe(result => {
-      this.updateTasksAndStat();
-    });
-  } */
-  onAddTask(task: Task) {
-    this.dataHandler.addTask(task).pipe(// сначала добавляем задачу
-      concatMap(task => { // используем добавленный task (concatMap - для последовательного выполнения)
-        // .. и считаем кол-во задач в категории с учетом добавленной задачи
-        return this.dataHandler.getUncompletedCountInCategory(task.category).pipe(map(count => {
-          return ({ t: task, count }); // в итоге получаем массив с добавленной задачей и кол-вом задач для категории
-        }));
-      }
-      )).subscribe(result => {
-
-        const t = result.t as Task;
-
-        // если указана категория - обновляем счетчик для соотв. категории
-        if (t.category) {
-          this.categoryMap.set(t.category, result.count);
-        }
-
-        this.updateTasksAndStat();
-
-      });
 
   }
-  // оновлення завдання
-  onUpdateTask(task: Task) { // for intr is good but not well for medium
-    /* this.dataHandler.updateTask(task).subscribe(cat => {
-      this.updateTasksAndStat()
-    }); */
-    this.dataHandler.updateTask(task).subscribe(() => {
-      this.fillCategories();
-      this.updateTasksAndStat();
-    });
-  }
 
-  // видалення завдання
-  /* onDeleteTask(task: Task) {
-    this.dataHandler.deleteTask(task).subscribe(cat => {
-      this.updateTasksAndStat()
-    });
-  } */
-  onDeleteTask(task: Task) {
-    if (task.category) {
-      this.dataHandler.deleteTask(task).pipe(
-        concatMap(task => {
-          return this.dataHandler.getUncompletedCountInCategory(task.category).pipe(map(count => {
-            return ({ t: task, count });
-          }));
-        }
-        )).subscribe(result => {
+  // заполняет массив категорий
+  fillAllCategories(): Observable<Category[]> {
 
-          const t = result.t as Task;
-          if (t.category) this.categoryMap.set(t.category, result.count);
+    return this.categoryService.findAll();
 
-          this.updateTasksAndStat();
-
-        });
-    }
 
   }
-  // пошук завдань
-  onSearchTasks(searchString: string) {
-    this.searchTaskText = searchString;
-    this.updateTasks();
-  }
 
-  // фільтрація завдань по статусу (все, вирішені, невирішені)
-  onFilterTasksByStatus(status: FilterStateTask) {
-
-    this.statusFilter = status;
-    this.updateTasks();
-  }
-
-  // фільтрація завдань по статусу (все, вирішені, невирішені)
-  onFilterTasksByPriority(priority: Priority) {
-    console.log(priority)
-    this.priorityFilter = priority;
-    this.updateTasks();
+  // заполнить дэш конкретными значниями
+  fillDashData(completedCount: number, uncompletedCount: number) {
+    this.dash.completedTotal = completedCount;
+    this.dash.uncompletedTotal = uncompletedCount;
   }
 
 
-  // показывает задачи с применением всех текущий условий (категория, поиск, фильтры и пр.)
-  updateTasksAndStat(): void {
+  // выбрали/изменили категорию
+  selectCategory(category: Category) {
 
-    this.updateTasks(); // обновить список задач
-
-    // обновить переменные для статистики
-    this.updateStat();
-
-  }
-  // refresh stat zip - join observeble methods -> call - wait - get data
-  updateStat(): void {
-    zip(
-      this.dataHandler.getTotalCountInCategory(this.selectedCategory),
-      this.dataHandler.getCompletedCountInCategory(this.selectedCategory),
-      this.dataHandler.getUncompletedCountInCategory(this.selectedCategory),
-      this.dataHandler.getUncompletedTotalCount())
-
-      .subscribe(array => {
-        this.totalTasksCountInCategory = array[0];
-        this.completedCountInCategory = array[1];
-        this.uncompletedCountInCategory = array[2];
-        this.uncompletedTotalTasksCount = array[3]; // need for category All
-      });
-  }
-
-  // show/hide stat
-  toggleStat(showStat: boolean): void {
-    this.showStat = showStat;
-  }
-
-  // если закрыли меню любым способом - ставим значение false
-  onClosedMenu() {
-    this.menuOpened = false;
-  }
-
-  // параметры меню
-  setMenuValues() {
-
-    this.menuPosition = 'left'; // меню слева
-
-    // настройки бокового меню для моб. и десктоп вариантов
-    if (this.isMobile) {
-      this.menuOpened = false; // на моб. версии по-умолчанию меню будет закрыто
-      this.menuMode = 'over'; // поверх всего контента
-      this.showBackdrop = true; // показывать темный фон или нет (нужно для мобильной версии)
+    if (category) { // если это не категория Все - то заполняем дэш данными выбранной категории
+      this.fillDashData(category.completedCount, category.uncompletedCount);
     } else {
-      this.menuOpened = true; // НЕ в моб. версии  по-умолчанию меню будет открыто (т.к. хватает места)
-      this.menuMode = 'push'; // будет "толкать" основной контент, а не закрывать его
-      this.showBackdrop = false; // показывать темный фон или нет
+      this.fillDashData(this.stat.completedTotal, this.stat.uncompletedTotal); // заполняем дэш данными для категории Все
     }
+
+    // сбрасываем, чтобы показывать результат с первой страницы
+    this.taskSearchValues.pageNumber = 0;
+
+    this.selectedCategory = category; // запоминаем выбранную категорию
+
+    // для поиска задач по данной категории
+    this.taskSearchValues.categoryId = category ? category.id : null;
+
+    // обновить список задач согласно выбранной категории и другим параметрам поиска из taskSearchValues
+    this.searchTasks(this.taskSearchValues);
+
+    if (this.isMobile) {
+      this.menuOpened = false; // для мобильных - автоматически закрываем боковое меню
+    }
+  }
+
+  // добавление категории
+  addCategory(category: Category) {
+    this.categoryService.add(category).subscribe(result => {
+      // если вызов сервиса завершился успешно - добавляем новую категорию в локальный массив
+
+      this.searchCategory(this.categorySearchValues);
+    }
+    );
+  }
+
+  // удаление категории
+  deleteCategory(category: Category) {
+    this.categoryService.delete(category.id).subscribe(cat => {
+      this.selectedCategory = null; // выбираем категорию "Все"
+
+      this.searchCategory(this.categorySearchValues);
+      this.selectCategory(this.selectedCategory);
+
+    });
+  }
+
+  // обновлении категории
+  updateCategory(category: Category) {
+    this.categoryService.update(category).subscribe(() => {
+
+      this.searchCategory(this.categorySearchValues); // обновляем список категорий
+      this.searchTasks(this.taskSearchValues); // обновляем список задач
+
+    });
+  }
+
+  // поиск категории
+  searchCategory(categorySearchValues: CategorySearchValues) {
+
+    this.categoryService.findCategories(categorySearchValues).subscribe(result => {
+      this.categories = result;
+    });
+
+  }
+
+  // показать-скрыть статистику
+
+  toggleStat(showStat: boolean) {
+    this.showStat = showStat;
+
+  }
+
+
+  // показать-скрыть поиск
+
+  toggleSearch(showSearch: boolean) {
+    this.showSearch = showSearch;
+
+
+  }
+
+  // поиск задач
+  searchTasks(searchTaskValues: TaskSearchValues) {
+
+    this.taskSearchValues = searchTaskValues;
+
+
+    this.taskService.findTasks(this.taskSearchValues).subscribe(result => {
+
+      // Если выбранная страница для отображения больше, чем всего страниц - заново делаем поиск и показываем 1ю страницу.
+      // Если пользователь был например на 2й странице общего списка и выполнил новый поиск, в результате которого доступна только 1 страница,
+      // то нужно вызвать поиск заново с показом 1й страницы (индекс 0)
+      if (result.totalPages > 0 && this.taskSearchValues.pageNumber >= result.totalPages) {
+        this.taskSearchValues.pageNumber = 0;
+        this.searchTasks(this.taskSearchValues);
+      }
+
+      this.totalTasksFounded = result.totalElements; // сколько данных показывать на странице
+      this.tasks = result.content; // массив задач
+    });
+
+
+  }
+
+
+  // обновить общую статистику и счетчик для категории Все (и показать эти данные в дашборде, если выбрана категория "Все")
+  updateOverallCounter() {
+
+    this.statService.getOverallStat().subscribe((res => { // получить из БД актуальные данные
+      this.stat = res; // получили данные из БД
+      this.uncompletedCountForCategoryAll = this.stat.uncompletedTotal; // для счетчика категории "Все"
+
+      if (!this.selectedCategory) { // если выбрана категория "Все" (selectedCategory === null)
+        this.fillDashData(this.stat.completedTotal, this.stat.uncompletedTotal); // заполнить дашборд данными общей статистики
+      }
+
+    }));
+
+  }
+
+
+  // обновить счетчик конкретной категории (и показать эти данные в дашборде, если выбрана эта категория)
+  updateCategoryCounter(category: Category) {
+
+    this.categoryService.findById(category.id).subscribe(cat => { // получить из БД актуальные данные
+
+      this.categories[this.getCategoryIndex(category)] = cat; // заменить в локальном массиве
+
+      this.showCategoryDashboard(cat);  // показать дашборд со статистикой категории
+
+    });
+  }
+
+  // показать дэшборд с данными статистики из категроии
+  showCategoryDashboard(cat: Category) {
+    if (this.selectedCategory && this.selectedCategory.id === cat.id) { // если выбрана та категория, где сейчас работаем
+      this.fillDashData(cat.completedCount, cat.uncompletedCount); // заполнить дашборд данными статистики из категории
+    }
+  }
+
+
+  // добавление задачи
+  addTask(task: Task) {
+
+    this.taskService.add(task).subscribe(result => {
+
+      if (task.category) { // если в новой задаче была указана категория
+        this.updateCategoryCounter(task.category); // обновляем счетчик для указанной категории
+      }
+
+      this.updateOverallCounter(); // обновляем всю статистику (в том числе счетчик для категории "Все")
+
+      this.searchTasks(this.taskSearchValues); // обновляем список задач
+
+    });
+
+
+  }
+
+
+  // удаление задачи
+  deleteTask(task: Task) {
+
+    this.taskService.delete(task.id).subscribe(result => {
+
+      if (task.category) { // если в удаленной задаче была указана категория
+        this.updateCategoryCounter(task.category); // обновляем счетчик для указанной категории
+      }
+
+      this.updateOverallCounter(); // обновляем всю статистику (в том числе счетчик для категории "Все")
+
+      this.searchTasks(this.taskSearchValues); // обновляем список задач
+
+    });
+
+
+  }
+
+
+  // обновление задачи
+  updateTask(task: Task) {
+
+    this.taskService.update(task).subscribe(result => {
+
+      if (task.oldCategory) { // если в изменной задаче старая категория была указана
+        this.updateCategoryCounter(task.oldCategory); // обновляем счетчик для старой категории
+      }
+
+      if (task.category) { // если в изменной задаче новая категория была указана
+        this.updateCategoryCounter(task.category); // обновляем счетчик для новой категории
+      }
+
+      this.updateOverallCounter(); // обновляем всю статистику (в том числе счетчик для категории "Все")
+
+      this.searchTasks(this.taskSearchValues); // обновляем список задач
+
+    });
+
+
   }
 
   // показать-скрыть меню
   toggleMenu() {
     this.menuOpened = !this.menuOpened;
   }
+
+
+  // если закрыли меню любым способом - ставим значение false
+  onClosedMenu() {
+    this.menuOpened = false;
+  }
+
+  // параметры отображения меню (зависит от устройства пользователя)
+  setMenuDisplayParams() {
+    this.menuPosition = 'left'; // меню слева
+
+    // настройки бокового меню для моб. и десктоп вариантов
+    if (this.isMobile) {
+      this.menuOpened = false; // на моб. версии по-умолчанию меню будет закрыто
+      this.menuMode = 'over'; // поверх всего контента
+      this.showBackdrop = true; // если нажали на область вне меню - закрыть его
+    } else {
+      this.menuOpened = true; // НЕ в моб. версии по-умолчанию меню будет открыто (т.к. хватает места)
+      this.menuMode = 'push'; // будет "толкать" основной контент, а не закрывать его
+      this.showBackdrop = false;
+    }
+
+  }
+
+
+  // изменили кол-во элементов на странице или перешли на другую страницу
+  // с помощью paginator
+  paging(pageEvent: PageEvent) {
+
+    // если изменили настройку "кол-во на странице" - заново делаем запрос и показываем с 1й страницы
+    if (this.taskSearchValues.pageSize !== pageEvent.pageSize) {
+      this.taskSearchValues.pageNumber = 0; // новые данные будем показывать с 1-й страницы (индекс 0)
+    } else {
+      // если просто перешли на другую страницу
+      this.taskSearchValues.pageNumber = pageEvent.pageIndex;
+    }
+
+    this.taskSearchValues.pageSize = pageEvent.pageSize;
+    this.taskSearchValues.pageNumber = pageEvent.pageIndex;
+
+    this.searchTasks(this.taskSearchValues); // показываем новые данные
+  }
+
+
+  // были ли изменены настройки приложения
+  settingsChanged(priorities: Priority[]) {
+    // this.fillAllPriorities(); // заново загрузить все категории из БД (чтобы их можно было сразу использовать в задачах)
+    this.priorities = priorities; // получаем измененные массив с приоритетами
+    this.searchTasks(this.taskSearchValues); // обновить текущие задачи и категории для отображения
+  }
+
+  // находит индекс элемента (по id) в локальном массиве
+
+  getCategoryFromArray(id: number): Category {
+    const tmpCategory = this.categories.find(t => t.id === id);
+    if(tmpCategory) return tmpCategory;
+    else return new 
+  }
+
+  getCategoryIndex(category: Category): number {
+    const tmpCategory = this.categories.find(t => t.id === category.id);
+    if(tmpCategory) return this.categories.indexOf(tmpCategory);
+    else return -1
+  }
+
+  getCategoryIndexById(id: number): number {
+    const tmpCategory = this.categories.find(t => t.id === id);
+    if(tmpCategory) return this.categories.indexOf(tmpCategory);
+    else return -1
+  }
+
+
 }
+
+
+
+
+
+// refresh stat zip - join observeble methods -> call - wait - get data
+/* updateStat(): void {
+  zip(
+    this.dataHandler.getTotalCountInCategory(this.selectedCategory),
+  this.dataHandler.getCompletedCountInCategory(this.selectedCategory),
+  this.dataHandler.getUncompletedCountInCategory(this.selectedCategory),
+  this.dataHandler.getUncompletedTotalCount())
+
+      .subscribe(array => {
+    this.totalTasksCountInCategory = array[0];
+    this.completedCountInCategory = array[1];
+    this.uncompletedCountInCategory = array[2];
+    this.uncompletedTotalTasksCount = array[3]; // need for category All
+  });
+} */
+
+
+
