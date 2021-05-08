@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { OperType } from 'src/app/data-nvv/dao/enum/OperType';
+
 import { Priority } from 'src/app/model-nvv/Priority';
 import { DialogAction, DialogResult } from 'src/app/object/DialogResult';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';

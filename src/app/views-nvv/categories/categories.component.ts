@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { OperType } from 'src/app/data-nvv/dao/enum/OperType';
+
 import { CategorySearchValues } from 'src/app/data-nvv/dao/interface/SearchObjects';
 import { EditCategoryDialogComponent } from 'src/app/dialog/edit-category-dialog/edit-category-dialog.component';
 import { Category } from 'src/app/model-nvv/Category';

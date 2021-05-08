@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { OperType } from 'src/app/data-nvv/dao/enum/OperType';
+
 import { ConfirmDialogComponent } from 'src/app/dialog/confirm-dialog/confirm-dialog.component';
 import { EditCategoryDialogComponent } from 'src/app/dialog/edit-category-dialog/edit-category-dialog.component';
 import { EditPriorityDialogComponent } from 'src/app/dialog/edit-priority-dialog/edit-priority-dialog.component';

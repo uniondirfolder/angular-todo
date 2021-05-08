@@ -1,12 +1,9 @@
 
 import { Component, Input, OnInit, TRANSLATIONS } from '@angular/core';
-import { FilterStateTask } from './data-nvv/dao/enum/FilterStateTasks';
-import { NoValue } from './data-nvv/dao/enum/NoValue';
 import { Category } from './model-nvv/Category';
 import { Priority } from './model-nvv/Priority';
 import { Task } from './model-nvv/Task';
-import { Observable, zip } from "rxjs";
-import { concatMap, map } from "rxjs/operators";
+import { Observable } from "rxjs";
 import { IntroService } from './service-nvv/intro.service';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { Stat } from './model-nvv/Stat';

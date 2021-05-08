@@ -29,7 +29,7 @@ export class CategoryService extends CommonService<Category> implements Category
   }
 
   findCategories(categorySearchValues: CategorySearchValues) {
-    return this.http.post<Category[]>(this.baseUrl + '/search', categorySearchValues);
+   return this.http.post<Category[]>(this.baseUrl + '/search', categorySearchValues);
   }
 }
 
